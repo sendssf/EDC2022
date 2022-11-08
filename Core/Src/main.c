@@ -170,9 +170,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   {
     //未编写串口输出。。。
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getpid(&MypidParms, &w1pid, __HAL_TIM_GET_COUNTER(&htim2), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getpid(&MypidParms, &w2pid, __HAL_TIM_GET_COUNTER(&htim3), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim3, 0);
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getpid(&MypidParms, &w3pid, __HAL_TIM_GET_COUNTER(&htim5), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim5, 0);
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getpid(&MypidParms, &w4pid, __HAL_TIM_GET_COUNTER(&htim8), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim8, 0);
   } 
 }
 /* USER CODE END 4 */
