@@ -45,6 +45,6 @@ typedef struct
     float ErrSum;
 }pidVars;
 
-float Getpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
+float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
 
 #endif

@@ -1,6 +1,6 @@
 #include "pid.h"
 
-float Getpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
+float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
 { 
     pv->dErr = LastRatio * (Tagrpm - count * pidFeq / CountPerRound - pv->Err) + (1 - LastRatio) * pv->dErr;
     pv->Err = Tagrpm - count * pidFeq / CountPerRound;
