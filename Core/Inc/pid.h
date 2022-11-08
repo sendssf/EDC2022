@@ -14,3 +14,30 @@
     - 参数从左到右分别是：定时器编号+通道编号+pwm输出时间（和之前设置的period计数周期有关） 比如，我们之前如果设计数周期是置的是1000-1，那么如果要60占空比，则将pwm输出为1000*60%=600
 
 */
+
+#ifndef PID_H
+#define PID_H
+
+#define CountPerRound 1080
+#define pidFeq 100
+#define pidLimit 1000
+#define LastRatio 0.9
+#define IntegralLimit 1e5
+
+typedef struct
+{
+    float kp;
+    float kd;
+    float ki;
+}pidParms;
+
+typedef struct
+{
+    float Err;
+    float dErr;
+    float ErrSum;
+}pidVars;
+
+float Getpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
+
+#endif

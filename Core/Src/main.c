@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "API.h"
+#include "pid.h"
 #include "jy62.h"
 /* USER CODE END Includes */
 
@@ -160,10 +161,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+float Setrpm;
+pidParms MypidParms;
+pidVars w1pid, w2pid, w3pid, w4pid;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance==TIM2)
   {
-    //PID
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getpid(&MypidParms, &w1pid, __HAL_TIM_GET_COUNTER(&htim2), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getpid(&MypidParms, &w2pid, __HAL_TIM_GET_COUNTER(&htim3), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getpid(&MypidParms, &w3pid, __HAL_TIM_GET_COUNTER(&htim5), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getpid(&MypidParms, &w4pid, __HAL_TIM_GET_COUNTER(&htim8), Setrpm));
   } 
 }
 /* USER CODE END 4 */
