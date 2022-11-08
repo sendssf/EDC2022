@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "API.h"
+#include "pid.h"
 #include "jy62.h"
 /* USER CODE END Includes */
 
@@ -160,10 +161,22 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+float Setrpm;
+//注：如果使用一个pid系数结构体，则所有轮子共用一套pid系数；允许创建多个pid系数结构体对轮子分别调参
+pidParms MypidParms;
+pidVars w1pid, w2pid, w3pid, w4pid;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance==TIM2)
   {
-    //PID
+    //未编写串口输出。。。
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getrpmpid(&MypidParms, &w1pid, __HAL_TIM_GET_COUNTER(&htim2), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getrpmpid(&MypidParms, &w2pid, __HAL_TIM_GET_COUNTER(&htim3), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim3, 0);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getrpmpid(&MypidParms, &w3pid, __HAL_TIM_GET_COUNTER(&htim5), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim5, 0);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getrpmpid(&MypidParms, &w4pid, __HAL_TIM_GET_COUNTER(&htim8), Setrpm));
+    __HAL_TIM_SET_COUNTER(&htim8, 0);
   } 
 }
 /* USER CODE END 4 */
