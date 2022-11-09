@@ -49,9 +49,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-float Setrpm[4];
-pidParms MypidParms;
-pidVars wheelpid[4];
+extern float Setrpm[4];
+extern pidParms MypidParms;
+extern pidVars wheelpid[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,7 +111,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_ALL);
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?
 
   /* USER CODE END 2 */
 
@@ -168,7 +168,7 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance==TIM2)
   {
-    //未编写串口输出�?��?��??
+    //未编写串口输出
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]));
     __HAL_TIM_SET_COUNTER(&htim2, 0);
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), Setrpm[1]));
