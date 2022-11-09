@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -48,7 +49,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+float Setrpm[4];
+pidParms MypidParms;
+pidVars wheelpid[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,6 +103,7 @@ int main(void)
   MX_TIM8_Init();
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim6);
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -107,7 +111,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_ALL);
-  jy62_Init(&huart3);     //uart3作为和加速度计通信的串口
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?
 
   /* USER CODE END 2 */
 
@@ -161,21 +165,17 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-float Setrpm;
-//注：如果使用一个pid系数结构体，则所有轮子共用一套pid系数；允许创建多个pid系数结构体对轮子分别调参
-pidParms MypidParms;
-pidVars w1pid, w2pid, w3pid, w4pid;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance==TIM2)
   {
-    //未编写串口输出。。。
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getrpmpid(&MypidParms, &w1pid, __HAL_TIM_GET_COUNTER(&htim2), Setrpm));
+    //未编写串口输出�?��?��??
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]));
     __HAL_TIM_SET_COUNTER(&htim2, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getrpmpid(&MypidParms, &w2pid, __HAL_TIM_GET_COUNTER(&htim3), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), Setrpm[1]));
     __HAL_TIM_SET_COUNTER(&htim3, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getrpmpid(&MypidParms, &w3pid, __HAL_TIM_GET_COUNTER(&htim5), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]));
     __HAL_TIM_SET_COUNTER(&htim5, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getrpmpid(&MypidParms, &w4pid, __HAL_TIM_GET_COUNTER(&htim8), Setrpm));
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]));
     __HAL_TIM_SET_COUNTER(&htim8, 0);
   } 
 }
