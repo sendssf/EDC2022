@@ -30,6 +30,7 @@
 #include "API.h"
 #include "pid.h"
 #include "jy62.h"
+#include "move.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

@@ -1,5 +1,9 @@
 #include "pid.h"
 
+pidParms MypidParms;
+pidVars wheelpid[4];
+
+
 float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
 { 
     pv->dErr = LastRatio * (Tagrpm - count * pidFeq / CountPerRound - pv->Err) + (1 - LastRatio) * pv->dErr;

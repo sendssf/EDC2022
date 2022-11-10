@@ -10,7 +10,7 @@
 #define RotateSpeedGain 1
 
 
-float Setrpm[4];
+extern float Setrpm[4];
 
 //基本移动函数，分别控制前后、左右、旋转分量来控制移动
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis);

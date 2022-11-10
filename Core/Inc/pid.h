@@ -28,6 +28,9 @@ typedef struct
     float ErrSum;
 }pidVars;
 
+extern pidParms MypidParms;
+extern pidVars wheelpid[4];
+
 float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
 
 #endif

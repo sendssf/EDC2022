@@ -1,5 +1,7 @@
 #include "move.h"
 
+float Setrpm[4];
+
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
 {
     Setrpm[0] = FrontBackSpeedGain * onRollAxis + RightLeftSpeedGain * onPitchAxis - RotateSpeedGain * rotateYawAxis;
