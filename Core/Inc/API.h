@@ -64,16 +64,6 @@ uint16_t GetDegree();
 //返回值：无，用结构体指针来返回结果
 void GetMyPos(Position* pos);
 
-//函数功能：控制小车向相对目前行进角度的多少度方向行进
-//参数：degree,相对角度，范围-179~180，逆时针为正向
-//     speed,车速,范围0~255,0表示停止
-void MoveRelaDeg(int16_t degree,uint8_t speed);
-
-//函数功能：控制小车向绝对角度degree方向行进
-//参数：degree,极坐标绝对角度，范围0~359
-//     speed,车速，同上
-void MoveSoliDeg(int16_t degree,uint8_t speed);
-
 //获得己方充电站位置
 //参数：坐标结构体指针，用来返回结果
 void GetMyChargerPos(Position* pos[]);
