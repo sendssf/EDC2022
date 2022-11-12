@@ -1,11 +1,14 @@
 #include "pid.h"
+#include "system.h"
+
+#define ROLL1_IN1 PBout(15)
 
 pidParms MypidParms;
 pidVars wheelpid[4];
 
 void rpmpid_Init()
 {
-    MypidParms.kd = 1;
+    MypidParms.kd = 10;
     MypidParms.kd = 1;
     MypidParms.ki = 1;
     for (int i = 0; i < 4; i++)
