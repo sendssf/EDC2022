@@ -7,8 +7,11 @@
 #define pidFeq 20
 //限制pid输出值的绝对值
 #define pidLimit 1000
+
+#define rpm_LastRatio 0.9
+#define Err_LastRatio 0.9
 //控制dErr平滑程度，范围0~1，等于1时计算dErr只考虑前后两次的Err，否则考虑前后三次的Err，一般取值0.6~1
-#define LastRatio 0.9
+#define dErr_LastRatio 0.9
 //限制积分变量的绝对值
 #define IntegralLimit 500
 
@@ -23,6 +26,7 @@ typedef struct
 //此结构体存储pid变量
 typedef struct
 {
+    float rpm;
     float Err;
     float dErr;
     float ErrSum;
