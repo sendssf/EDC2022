@@ -13,6 +13,7 @@ void rpmpid_Init()
     MypidParms.ki = 1;
     for (int i = 0; i < 4; i++)
     {
+        wheelpid[i].rpm = 0;
         wheelpid[i].Err = 0;
         wheelpid[i].dErr = 0;
         wheelpid[i].ErrSum = 0;
@@ -21,8 +22,9 @@ void rpmpid_Init()
 
 float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
 { 
-    pv->dErr = LastRatio * (Tagrpm - count * pidFeq / CountPerRound - pv->Err) + (1 - LastRatio) * pv->dErr;
-    pv->Err = Tagrpm - count * pidFeq / CountPerRound;
+    pv->rpm = rpm_LastRatio * count * pidFeq / CountPerRound + (1 - rpm_LastRatio) * pv->rpm;
+    pv->dErr = dErr_LastRatio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErr_LastRatio) * pv->dErr;
+    pv->Err = Err_LastRatio * (Tagrpm - pv->rpm) + (1 - Err_LastRatio) * pv->Err;
     if (pv->ErrSum > IntegralLimit)
     {
         if (pv->Err < 0)
