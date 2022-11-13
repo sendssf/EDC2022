@@ -28,6 +28,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "API.h"
+#include "system.h"
 #include "pid.h"
 #include "jy62.h"
 #include "move.h"
@@ -106,14 +107,22 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start(&htim1);
   HAL_TIM_Base_Start_IT(&htim6);
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_ALL);
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???
 
+  rpmpid_Init();
+  Setrpm[0] = 200;
+  Setrpm[1] = 100;
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -123,6 +132,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    //u1_printf("sb\r\n");
+    
   }
   /* USER CODE END 3 */
 }
@@ -166,19 +177,92 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+int pwm_temp;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-  if(htim->Instance==TIM2)
+  if(htim->Instance == TIM6)
   {
-    //未编写串口输出
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]));
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]);
+    //u1_printf("%f %f\r\n",Setrpm[0],pwm_temp);
+    if (pwm_temp > 0)
+    {
+      PBout(15) = 1;
+      PBout(14) = 0;
+    }
+    else if (pwm_temp < 0)
+    {
+      PBout(15) = 0;
+      PBout(14) = 1;
+      pwm_temp = -pwm_temp;
+    }
+    else{
+      PBout(15) = 0;
+      PBout(14) = 0;
+      pwm_temp = 0;
+    }
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), Setrpm[1]));
+    u1_printf("%f %f %f\r\n", wheelpid[0].Err,wheelpid[0].dErr, wheelpid[0].ErrSum);
+
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), Setrpm[1]);
+    if (pwm_temp > 0)
+    {
+      PBout(13) = 1;
+      PBout(12) = 0;
+    }
+    else if (pwm_temp < 0)
+    {
+      PBout(13) = 0;
+      PBout(12) = 1;
+      pwm_temp = -pwm_temp;
+    }
+    else{
+      PBout(13) = 0;
+      PBout(12) = 0;
+      pwm_temp = 0;
+    }
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim3, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]));
+
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]);
+    if (pwm_temp > 0)
+    {
+      PCout(0) = 1;
+      PCout(1) = 0;
+    }
+    else if (pwm_temp < 0)
+    {
+      PCout(0) = 0;
+      PCout(1) = 1;
+      pwm_temp = -pwm_temp;
+    }
+    else{
+      PCout(0) = 0;
+      PCout(1) = 0;
+      pwm_temp = 0;
+    }
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim5, 0);
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]));
+
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]);
+    if (pwm_temp > 0)
+    {
+      PCout(2) = 1;
+      PCout(3) = 0;
+    }
+    else if (pwm_temp < 0)
+    {
+      PCout(2) = 0;
+      PCout(3) = 1;
+      pwm_temp = -pwm_temp;
+    }
+    else{
+      PCout(2) = 0;
+      PCout(3) = 0;
+      pwm_temp = 0;
+    }
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim8, 0);
-  } 
+  }
 }
 /* USER CODE END 4 */
 

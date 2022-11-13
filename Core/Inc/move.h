@@ -4,9 +4,13 @@
 #include <stdbool.h>
 #include <math.h>
 
+//标准速度值
 #define StandardSpeed 100
+//前后方向速度增益
 #define FrontBackSpeedGain 1
+//左右方向速度增益
 #define RightLeftSpeedGain 1
+//转向速度增益
 #define RotateSpeedGain 1
 
 
