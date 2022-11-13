@@ -63,3 +63,4 @@ dkms.conf
 *.lst
 *.scvd
 *.iex
+.mxproject
