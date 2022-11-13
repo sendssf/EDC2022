@@ -39,6 +39,6 @@ extern pidVars wheelpid[4];
 
 void rpmpid_Init();
 
-float Getrpmpid(pidParms* pm, pidVars* pv, int count, bool isForward, float Tagrpm);
+float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
 
 #endif
