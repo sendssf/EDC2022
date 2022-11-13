@@ -41,6 +41,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define PWM_Switch_Threshold 0.1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -181,14 +182,14 @@ int pwm_temp;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance == TIM6)
   {
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]);
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2), Setrpm[0]);
     //u1_printf("%f %f\r\n",Setrpm[0],pwm_temp);
-    if (pwm_temp > 0)
+    if (pwm_temp > PWM_Switch_Threshold)
     {
       PBout(15) = 1;
       PBout(14) = 0;
     }
-    else if (pwm_temp < 0)
+    else if (pwm_temp < -PWM_Switch_Threshold)
     {
       PBout(15) = 0;
       PBout(14) = 1;
@@ -201,15 +202,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
-    u1_printf("%f %f %f\r\n", wheelpid[0].Err,wheelpid[0].dErr, wheelpid[0].ErrSum);
-
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), Setrpm[1]);
-    if (pwm_temp > 0)
+  
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim3), __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim3), Setrpm[1]);
+    if (pwm_temp > PWM_Switch_Threshold)
     {
       PBout(13) = 1;
       PBout(12) = 0;
     }
-    else if (pwm_temp < 0)
+    else if (pwm_temp < -PWM_Switch_Threshold)
     {
       PBout(13) = 0;
       PBout(12) = 1;
@@ -223,13 +223,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim3, 0);
 
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]);
-    if (pwm_temp > 0)
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim5), Setrpm[2]);
+    if (pwm_temp > PWM_Switch_Threshold)
     {
       PCout(0) = 1;
       PCout(1) = 0;
     }
-    else if (pwm_temp < 0)
+    else if (pwm_temp < -PWM_Switch_Threshold)
     {
       PCout(0) = 0;
       PCout(1) = 1;
@@ -243,13 +243,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim5, 0);
 
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]);
-    if (pwm_temp > 0)
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim8), Setrpm[3]);
+    if (pwm_temp > PWM_Switch_Threshold)
     {
       PCout(2) = 1;
       PCout(3) = 0;
     }
-    else if (pwm_temp < 0)
+    else if (pwm_temp < -PWM_Switch_Threshold)
     {
       PCout(2) = 0;
       PCout(3) = 1;
