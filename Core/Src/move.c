@@ -4,10 +4,10 @@ float Setrpm[4];
 
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
 {
-    Setrpm[0] = FrontBackSpeedGain * onRollAxis + RightLeftSpeedGain * onPitchAxis - RotateSpeedGain * rotateYawAxis;
-    Setrpm[1] = FrontBackSpeedGain * onRollAxis - RightLeftSpeedGain * onPitchAxis + RotateSpeedGain * rotateYawAxis;
-    Setrpm[2] = FrontBackSpeedGain * onRollAxis - RightLeftSpeedGain * onPitchAxis - RotateSpeedGain * rotateYawAxis;
-    Setrpm[3] = FrontBackSpeedGain * onRollAxis + RightLeftSpeedGain * onPitchAxis + RotateSpeedGain * rotateYawAxis;
+    Setrpm[0] = -(FrontBackSpeedGain * onRollAxis + RightLeftSpeedGain * onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    Setrpm[1] = (FrontBackSpeedGain * onRollAxis - RightLeftSpeedGain * onPitchAxis + RotateSpeedGain * rotateYawAxis);
+    Setrpm[2] = -(FrontBackSpeedGain * onRollAxis - RightLeftSpeedGain * onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    Setrpm[3] = (FrontBackSpeedGain * onRollAxis + RightLeftSpeedGain * onPitchAxis + RotateSpeedGain * rotateYawAxis);
 }
 
 void MoveReleDeg(float radian, float speed, bool isTurn)
