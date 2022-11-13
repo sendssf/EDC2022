@@ -101,6 +101,10 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 
 /* USER CODE BEGIN 1 */
 
+void I2C_ReadByte(uint8_t* data,int num,uint8_t reg,uint8_t addr){
+  HAL_I2C_Mem_Read(&hi2c2,addr,reg,I2C_MEMADD_SIZE_8BIT,data,num,0xff);
+}
+ 
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
