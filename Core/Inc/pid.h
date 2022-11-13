@@ -1,6 +1,8 @@
 #ifndef PID_H
 #define PID_H
 
+#include "stdbool.h"
+
 //每转一圈编码盘计数
 #define CountPerRound 13
 //pid所在中断的频率（单位Hz）
@@ -37,6 +39,6 @@ extern pidVars wheelpid[4];
 
 void rpmpid_Init();
 
-float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm);
+float Getrpmpid(pidParms* pm, pidVars* pv, int count, bool isForward, float Tagrpm);
 
 #endif
