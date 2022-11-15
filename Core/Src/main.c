@@ -32,6 +32,7 @@
 #include "pid.h"
 #include "jy62.h"
 #include "move.h"
+#include "delay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +42,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PWM_Switch_Threshold 0.1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -121,7 +121,8 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�????
+  delay_init();
+  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?????
 
   rpmpid_Init();
   
@@ -135,8 +136,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     //u1_printf("sb\r\n");
-    MoveBasic(0,-100,0);
-
+    MoveBasic(-150,-150,-150);
   }
   /* USER CODE END 3 */
 }
@@ -180,117 +180,119 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-int pwm_temp;
+float pwm_temp;
 int count_temp;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance == TIM6)
   {
+    count_temp = 0;
     if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2))
     {
-      count_temp = 65535 - __HAL_TIM_GET_COUNTER(&htim2);
+      count_temp = __HAL_TIM_GET_COUNTER(&htim2);
+      if (count_temp != 0)
+      {
+        count_temp -= 65535;
+      }
     }
     else{
-      count_temp = -__HAL_TIM_GET_COUNTER(&htim2);
+      count_temp = __HAL_TIM_GET_COUNTER(&htim2);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], count_temp, Setrpm[0]);
-    //u1_printf("%f %f\r\n",Setrpm[0],pwm_temp);
-    if (pwm_temp > PWM_Switch_Threshold)
+    u2_printf("%f\r\n",pwm_temp);
+    if (pwm_temp > 0)
     {
       PBout(15) = 1;
-      PBout(14) = 0;
+      PCout(14) = 0;
     }
-    else if (pwm_temp < -PWM_Switch_Threshold)
+    else if (pwm_temp < 0)
     {
       PBout(15) = 0;
-      PBout(14) = 1;
+      PCout(14) = 1;
       pwm_temp = -pwm_temp;
     }
-    else{
-      PBout(15) = 0;
-      PBout(14) = 0;
-      pwm_temp = 0;
-    }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
-    u2_printf("%d %d \r\n",__HAL_TIM_GET_COUNTER(&htim2),__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2));
+    //u2_printf("%f %f %f %f\r\n",wheelpid[0].rpm,wheelpid[1].rpm,__HAL_TIM_GetCounter(&htim2),__HAL_TIM_GetCounter(&htim4));
     __HAL_TIM_SET_COUNTER(&htim2, 0);
-  
+
+    count_temp = 0;
     if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim4))
     {
-      count_temp = __HAL_TIM_GET_COUNTER(&htim4) - 65535;
+      count_temp = __HAL_TIM_GET_COUNTER(&htim4);
+      if (count_temp != 0)
+      {
+        count_temp -= 65535;
+      }
     }
     else{
       count_temp = __HAL_TIM_GET_COUNTER(&htim4);
     }
+    //u2_printf("%d\r\n",count_temp);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], count_temp, Setrpm[1]);
-    if (pwm_temp > PWM_Switch_Threshold)
+    u2_printf("%f\r\n",pwm_temp);
+    if (pwm_temp > 0)
     {
       PBout(13) = 1;
       PBout(12) = 0;
     }
-    else if (pwm_temp < -PWM_Switch_Threshold)
+    else if (pwm_temp < 0)
     {
       PBout(13) = 0;
       PBout(12) = 1;
       pwm_temp = -pwm_temp;
-    }
-    else{
-      PBout(13) = 0;
-      PBout(12) = 0;
-      pwm_temp = 0;
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim4, 0);
 
     if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim5))
     {
-      count_temp = 65535 - __HAL_TIM_GET_COUNTER(&htim5);
+      count_temp = __HAL_TIM_GET_COUNTER(&htim5);
+      if (count_temp != 0)
+      {
+        count_temp -= 65535;
+      }
     }
     else{
-      count_temp = -__HAL_TIM_GET_COUNTER(&htim5);
+      count_temp = __HAL_TIM_GET_COUNTER(&htim5);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], count_temp, Setrpm[2]);
-    if (pwm_temp > PWM_Switch_Threshold)
+    u2_printf("%f\r\n",pwm_temp);
+    if (pwm_temp > 0)
     {
       PCout(0) = 1;
       PCout(1) = 0;
     }
-    else if (pwm_temp < -PWM_Switch_Threshold)
+    else if (pwm_temp < 0)
     {
       PCout(0) = 0;
       PCout(1) = 1;
       pwm_temp = -pwm_temp;
-    }
-    else{
-      PCout(0) = 0;
-      PCout(1) = 0;
-      pwm_temp = 0;
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim5, 0);
 
     if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim8))
     {
-      count_temp = __HAL_TIM_GET_COUNTER(&htim8) - 65535;
+      count_temp = __HAL_TIM_GET_COUNTER(&htim8);
+      if (count_temp != 0)
+      {
+        count_temp -= 65535;
+      }
     }
     else{
       count_temp = __HAL_TIM_GET_COUNTER(&htim8);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], count_temp, Setrpm[3]);
-    if (pwm_temp > PWM_Switch_Threshold)
+    u2_printf("%f\r\n",pwm_temp);
+    if (pwm_temp > 0)
     {
       PCout(2) = 1;
       PCout(3) = 0;
     }
-    else if (pwm_temp < -PWM_Switch_Threshold)
+    else if (pwm_temp < 0)
     {
       PCout(2) = 0;
       PCout(3) = 1;
       pwm_temp = -pwm_temp;
-    }
-    else{
-      PCout(2) = 0;
-      PCout(3) = 0;
-      pwm_temp = 0;
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim8, 0);
