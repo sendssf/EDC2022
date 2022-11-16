@@ -6,7 +6,7 @@ volatile uint8_t jy62Receive[JY62_MESSAGE_LENGTH];  //实时记录收到的信�
 volatile uint8_t jy62Message[JY62_MESSAGE_LENGTH];   //确认无误后用于解码的信息
 uint8_t initAngle[3] = {0xFF, 0xAA, 0x52};     
 uint8_t calibrateAcce[3] = {0xFF, 0xAA, 0x67}; 
-uint8_t setBaud115200[3] = {0xFF, 0xAA, 0x63}; 
+uint8_t setBaud115200[3] = {0xFF, 0xAA, 0x63};
 uint8_t setBaud9600[3] = {0xFF, 0xAA, 0x64};    
 uint8_t setHorizontal[3] = {0xFF, 0xAA, 0x65};  
 uint8_t setVertical[3] = {0xFF, 0xAA, 0x66};

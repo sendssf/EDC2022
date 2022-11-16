@@ -6,6 +6,7 @@ ChargerInfo enemycharger;
 Trace trace;
 Node* foodlist;
 Block block[10];
+uint8_t map[255][255];      //地图数组
 
 //函数功能：获得小车当前的前进方向
 //返回值：小车行进方向的绝对极坐标角度
@@ -48,3 +49,5 @@ Position GetPrevPos(uint8_t number){
 void SetCharger(void){
 
 }
+
+
