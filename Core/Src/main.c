@@ -106,6 +106,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C2_Init();
   MX_TIM4_Init();
+  MX_UART5_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
   HAL_TIM_Base_Start_IT(&htim6);
@@ -122,12 +123,15 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
-  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?????
-
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�??????
   rpmpid_Init();
-  
+  HAL_UART_Receive_IT(&huart5,Message,13);
+  SetBaud(9600);
+  SetHorizontal();
+  InitAngle();
+  Calibrate();
   /* USER CODE END 2 */
-
+  
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

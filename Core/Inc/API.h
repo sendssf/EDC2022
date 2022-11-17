@@ -81,4 +81,7 @@ Position GetPrevPos(uint8_t number);
 //设置充电站
 void SetCharger(void);
 
+//初始化地图
+void InitMap();
+
 #endif

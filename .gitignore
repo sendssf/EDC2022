@@ -64,3 +64,4 @@ dkms.conf
 *.scvd
 *.iex
 .mxproject
+./build/EDC2022.bin
