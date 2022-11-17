@@ -125,7 +125,7 @@ int main(void)
   delay_init();
   jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�??????
   rpmpid_Init();
-  HAL_UART_Receive_IT(&huart5,Message,13);
+  HAL_UART_Receive_IT(&huart2,Message,13);
   SetBaud(9600);
   SetHorizontal();
   InitAngle();
@@ -140,7 +140,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     //u1_printf("sb\r\n");
-    MoveBasic(20, 0, 0);
+    
   }
   /* USER CODE END 3 */
 }
@@ -202,7 +202,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
       count_temp = __HAL_TIM_GET_COUNTER(&htim2);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], count_temp, Setrpm[0]);
-    u2_printf("%f\r\n",pwm_temp);
+    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PBout(15) = 1;
@@ -232,7 +232,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     }
     //u2_printf("%d\r\n",count_temp);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], count_temp, Setrpm[1]);
-    u2_printf("%f\r\n",pwm_temp);
+    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PBout(13) = 1;
@@ -259,7 +259,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
       count_temp = __HAL_TIM_GET_COUNTER(&htim5);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], count_temp, Setrpm[2]);
-    u2_printf("%f\r\n",pwm_temp);
+    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PCout(0) = 1;
@@ -286,7 +286,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
       count_temp = __HAL_TIM_GET_COUNTER(&htim8);
     }
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], count_temp, Setrpm[3]);
-    u2_printf("%f\r\n",pwm_temp);
+    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PCout(2) = 1;
