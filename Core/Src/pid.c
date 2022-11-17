@@ -7,9 +7,9 @@ pidVars wheelpid[4];
 
 void rpmpid_Init()
 {
-    MypidParms.kp = 1;
-    MypidParms.kd = 5;
-    MypidParms.ki = 1;
+    MypidParms.kp = 1.2;
+    MypidParms.kd = 3.8;
+    MypidParms.ki = 0.8;
     for (int i = 0; i < 4; i++)
     {
         wheelpid[i].rpm = 0;

@@ -13,7 +13,7 @@
 #define Err_LastRatio 1
 //控制dErr平滑程度，范围0~1，等于1时计算dErr只考虑前后两次的Err，否则考虑前后三次的Err，一般取值0.6~1
 #define dErr_LastRatio 1
-#define pwm_LastRatio 0.8
+#define pwm_LastRatio  1
 //限制积分变量的绝对值
 #define IntegralLimit 500
 //最大转速绝对值

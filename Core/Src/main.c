@@ -123,7 +123,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�??????
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,13);
   SetBaud(9600);
@@ -131,7 +131,7 @@ int main(void)
   InitAngle();
   Calibrate();
   /* USER CODE END 2 */
-  
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -205,7 +205,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     //u2_printf("%f %f %f %f\r\n",wheelpid[0].rpm,wheelpid[1].rpm,__HAL_TIM_GetCounter(&htim2),__HAL_TIM_GetCounter(&htim4));
     __HAL_TIM_SET_COUNTER(&htim2, 0);
 
-    u2_printf("%d\r\n",wheelpid[0].rpm);
+    u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
     //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
