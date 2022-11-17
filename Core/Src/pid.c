@@ -21,6 +21,10 @@ void rpmpid_Init()
 
 float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
 { 
+    if (count > 65535 - Maxrpm)
+    {
+        count -= 65535;
+    }
     pv->rpm = rpm_LastRatio * count * pidFeq / CountPerRound + (1 - rpm_LastRatio) * pv->rpm;
     pv->dErr = dErr_LastRatio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErr_LastRatio) * pv->dErr;
     pv->Err = Err_LastRatio * (Tagrpm - pv->rpm) + (1 - Err_LastRatio) * pv->Err;
