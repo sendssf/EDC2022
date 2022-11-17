@@ -16,6 +16,8 @@
 #define dErr_LastRatio 1
 //限制积分变量的绝对值
 #define IntegralLimit 150
+//最大转速绝对值
+#define Maxrpm 1000
 
 //此结构体存储pid系数
 typedef struct
