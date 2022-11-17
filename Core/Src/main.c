@@ -136,7 +136,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     //u1_printf("sb\r\n");
-    MoveBasic(-150,-150,-150);
+    MoveBasic(20, 0, 0);
   }
   /* USER CODE END 3 */
 }
