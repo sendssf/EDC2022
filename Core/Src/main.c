@@ -206,7 +206,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SET_COUNTER(&htim2, 0);
 
     //u2_printf("%d\r\n",count_temp);
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim4), Setrpm[1]);
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
     u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
@@ -222,7 +222,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim4, 0);
 
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim5), Setrpm[2]);
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]);
     if (pwm_temp > 0)
     {
       PCout(0) = 1;
@@ -237,7 +237,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim5, 0);
 
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim8), Setrpm[3]);
+    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]);
     u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
