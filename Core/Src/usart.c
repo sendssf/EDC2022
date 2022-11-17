@@ -331,7 +331,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
       uint8_t temp1,temp2,temp3;
       sscanf(Message,"(%hhd,%hhd,%hhd)",&temp1,&temp2,&temp3);
       MoveBasic((float)temp1,(float)temp2,(float)temp3);
-      u2_printf("OK %d %d %d\r\n",temp1,temp2,temp3);
+      //u2_printf("OK %d %d %d\r\n",temp1,temp2,temp3);
       HAL_UART_Receive_IT(&huart2,Message,13);
     }
 }
