@@ -123,7 +123,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,13);
   SetBaud(9600);
@@ -139,8 +139,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    //u1_printf("sb\r\n");
-    
+
   }
   /* USER CODE END 3 */
 }
@@ -189,7 +188,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance == TIM6)
   {
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]);
-    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PBout(15) = 1;
@@ -202,12 +200,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
       pwm_temp = -pwm_temp;
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
-    //u2_printf("%f %f %f %f\r\n",wheelpid[0].rpm,wheelpid[1].rpm,__HAL_TIM_GetCounter(&htim2),__HAL_TIM_GetCounter(&htim4));
     __HAL_TIM_SET_COUNTER(&htim2, 0);
 
     u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
-    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PBout(13) = 1;
@@ -238,7 +234,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SET_COUNTER(&htim5, 0);
 
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]);
-    //u2_printf("%f\r\n",pwm_temp);
     if (pwm_temp > 0)
     {
       PCout(2) = 1;

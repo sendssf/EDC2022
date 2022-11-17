@@ -1,7 +1,5 @@
 #include "pid.h"
 
-#define ROLL1_IN1 PBout(15)
-
 pidParms MypidParms;
 pidVars wheelpid[4];
 
@@ -10,6 +8,7 @@ void rpmpid_Init()
     MypidParms.kp = 1.2;
     MypidParms.kd = 3.8;
     MypidParms.ki = 0.8;
+
     for (int i = 0; i < 4; i++)
     {
         wheelpid[i].rpm = 0;
@@ -17,7 +16,17 @@ void rpmpid_Init()
         wheelpid[i].Err = 0;
         wheelpid[i].dErr = 0;
         wheelpid[i].ErrSum = 0;
+        wheelpid[i].DEMActive = -1;
     }
+}
+
+float abs(float num)
+{
+    if (num < 0)
+    {
+        return -num;
+    }
+    return num;
 }
 
 float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
@@ -27,8 +36,31 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
         count -= 65535;
     }
     pv->rpm = count * pidFeq / CountPerRound;
-    pv->dErr = dErr_LastRatio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErr_LastRatio) * pv->dErr;
-    pv->Err = Err_LastRatio * (Tagrpm - pv->rpm) + (1 - Err_LastRatio) * pv->Err;
+    pv->dErr = Tagrpm - pv->rpm - pv->Err;
+    pv->Err = Tagrpm - pv->rpm;
+
+    float output;
+    if (abs(pv->Err) > DampingDividingEnableValue)
+    {
+        pv->DEMActive = 0;
+    }
+    if (pv->DEMActive >= 0)
+    {
+        if (abs(pv->Err) < DampingDividingBeginValue)
+        { 
+            output = pm->kp * pv->Err + (DampingGain / (abs(pv->Err) + 1)) * pm->kd * pv->dErr;
+            if (abs(pv->Err) < DampingDividingEndValue)
+            {
+                pv->DEMActive += 1;
+                if (pv->DEMActive >= MaxOscillatingPeriodNum)
+                {
+                    pv->DEMActive == -1;
+                }
+            }
+            pv->pwm = pwmLastRatio * output + (1 - pwmLastRatio) * pv->pwm;
+            return pv->pwm;
+        }
+    }
     if (pv->ErrSum > IntegralLimit)
     {
         if (pv->Err < 0)
@@ -46,7 +78,11 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     else{
         pv->ErrSum += pv->Err;
     }
-    float output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
+    if (abs(pv->Err) > DampingDividingEnableValue)
+    {
+        pv->DEMActive = 0;
+    }
+    output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
     if (output > pidLimit)
     {
         output = pidLimit;
@@ -55,6 +91,6 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     {
         output = -pidLimit;
     }
-    pv->pwm = pwm_LastRatio * output + (1 - pwm_LastRatio) * pv->pwm;
+    pv->pwm = pwmLastRatio * output + (1 - pwmLastRatio) * pv->pwm;
     return pv->pwm;
 }
