@@ -41,7 +41,7 @@ void MX_I2C2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void I2C_ReadByte(uint8_t* data,int num,uint8_t reg,uint8_t addr);
-
+void I2C_WriteByte(uint8_t* data,uint8_t reg,uint8_t addr);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
