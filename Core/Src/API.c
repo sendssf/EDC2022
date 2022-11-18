@@ -37,14 +37,6 @@ void GetMyChargerPos(){
             mycharger.Charger[i].x=(uint8_t)ptemp.x;
             mycharger.Charger[i].y=(uint8_t)ptemp.y;
         }
-        for (int i=0;i<mycharger.chargernum;i++){
-            pos[i]->x=(uint8_t)mycharger.Charger[i].x;
-            pos[i]->y=(uint8_t)mycharger.Charger[i].y;
-        }
-        for (int i=mycharger.chargernum;i<3;i++){
-            pos[i]->x=0;
-            pos[i]->y=0;
-        }
     }
 }
 
