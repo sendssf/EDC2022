@@ -60,7 +60,7 @@ extern ChargerInfo enemycharger;
 
 extern Trace trace;
 extern Node* foodlist;
-extern Block block[10];
+extern Block block[20];
 extern uint8_t blocknum;
 
 
