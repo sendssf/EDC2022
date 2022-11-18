@@ -125,7 +125,7 @@ int main(void)
   delay_init();
   jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????
   rpmpid_Init();
-  HAL_UART_Receive_IT(&huart2,Message,13);
+  HAL_UART_Receive_IT(&huart2,Message,16);
   SetBaud(9600);
   SetHorizontal();
   InitAngle();
