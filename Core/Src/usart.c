@@ -27,8 +27,9 @@
 #include "jy62.h"
 #include "stdio.h"
 #include "move.h"
+#include "pid.h"
 
-unsigned char Message[14];
+unsigned char Message[17];
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart5;
@@ -328,11 +329,22 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
       jy62MessageRecord();
     }
     else if(huart==&huart2){
-      uint8_t temp1,temp2,temp3;
-      sscanf(Message,"(%hhd,%hhd,%hhd)",&temp1,&temp2,&temp3);
-      MoveBasic((float)temp1,(float)temp2,(float)temp3);
+      int16_t temp1,temp2,temp3;
+      sscanf(Message,"(%hd,%hd,%hd)",&temp1,&temp2,&temp3);
+      if(temp1==-999){
+        MypidParms.kp=temp3;
+      }
+      else if(temp1==-998){
+        MypidParms.kd=temp3;
+      }
+      else if(temp1==-997){
+        MypidParms.ki=temp3;
+      }
+      else{
+        MoveBasic((float)temp1,(float)temp2,(float)temp3);
+      }
       //u2_printf("OK %d %d %d\r\n",temp1,temp2,temp3);
-      HAL_UART_Receive_IT(&huart2,Message,13);
+      HAL_UART_Receive_IT(&huart2,Message,16);
     }
 }
 /* USER CODE END 1 */

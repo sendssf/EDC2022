@@ -36,9 +36,10 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
         count -= 65535;
     }
     pv->rpm = count * pidFeq / CountPerRound;
-    pv->dErr = Tagrpm - pv->rpm - pv->Err;
+    pv->dErr = dErrLastRaio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErrLastRaio) * pv->dErr;
     pv->Err = Tagrpm - pv->rpm;
 
+<<<<<<< HEAD
     float output;
     if (abs(pv->Err) > DampingDividingEnableValue)
     {
@@ -61,6 +62,8 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
             return pv->pwm;
         }
     }
+=======
+>>>>>>> a62afb36b2fb87ca5cc120a59d90c7099eb8df1b
     if (pv->ErrSum > IntegralLimit)
     {
         if (pv->Err < 0)
@@ -78,11 +81,24 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     else{
         pv->ErrSum += pv->Err;
     }
-    if (abs(pv->Err) > DampingDividingEnableValue)
+
+    if (abs(pv->Err) > ZoneTriggerErr)
     {
         pv->DEMActive = 0;
     }
-    output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
+    if (pv->DEMActive >= 0)
+    {
+        pv->Err = 0;
+        pv->dErr = 0;
+        if (abs(pv->Err) < ZoneEndErr)
+        {
+            pv->ErrSum = 0;
+            pv->DEMActive = -1;
+        }
+
+    }
+
+    float output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
     if (output > pidLimit)
     {
         output = pidLimit;

@@ -3,6 +3,15 @@
 
 #include "stdint.h"
 
+//map数组的值：
+#define Empty 0         //啥也没有的位置
+#define Blocks 1        //障碍物区域
+#define Mycharger 2     //我方充电站
+#define Enemycharger 3  //敌方充电站
+#define Begins 4        //外卖起点
+#define Ends 5          //外卖终点
+
+
 //结构体，用来存储点的坐标
 typedef struct {
     uint8_t x;
@@ -52,6 +61,7 @@ extern ChargerInfo enemycharger;
 extern Trace trace;
 extern Node* foodlist;
 extern Block block[10];
+extern uint8_t blocknum;
 
 
 //函数功能：获得小车当前的前进方向
@@ -65,12 +75,14 @@ uint16_t GetDegree();
 void GetMyPos(Position* pos);
 
 //获得己方充电站位置
-//参数：坐标结构体指针，用来返回结果
-void GetMyChargerPos(Position* pos[]);
+//参数：无
+//仅在第二轮游戏中调用
+void GetMyChargerPos();
 
 //获得敌方充电站位置
-//参数：坐标结构体指针，用来返回结果
-void GetEnemyChargerPos(Position* pos[]);
+//参数：无
+//仅在第二轮游戏中调用
+void GetEnemyChargerPos();
 
 //获得续航，返回续航值
 uint32_t GetEnergy();
@@ -83,5 +95,8 @@ void SetCharger(void);
 
 //初始化地图
 void InitMap();
+
+//刷新障碍物，一般需要经常调用判断是否有障碍物更新或者取消
+void UpdateBlocks(void);
 
 #endif

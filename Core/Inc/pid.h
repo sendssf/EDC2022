@@ -9,6 +9,7 @@
 #define pidFeq 20
 //限制pid输出值的绝对值
 #define pidLimit 1000
+#define dErrLastRaio 0.8
 //控制pwm输出的平滑程度，范围0~1，等于1时计算pwm只考虑当次的pid输出，否则考虑前后两次的pid输出，一般取值0.6~1
 #define pwmLastRatio 0.8
 //限制积分变量的绝对值
@@ -17,7 +18,7 @@
 #define Maxrpm 2000
 
 //模糊控制（实验性）
-//模糊控制作用机制：当误差Err超过设定值时激活控制：当误差降到控制起始点时开始增强阻尼，当误差继续降到控制终止点并在终止点内持续一定周期后阻尼回到正常值
+//模糊控制作用机制
 //模糊控制分界点
 #define DampingDividingEnableValue 50
 #define DampingDividingBeginValue 40
