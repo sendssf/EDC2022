@@ -48,7 +48,7 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     {
         if (abs(pv->Err) < DampingDividingBeginValue)
         { 
-            output = pm->kp * pv->Err + (DampingGain / (abs(pv->Err) + 1)) * pm->kd * pv->dErr;
+            output = pm->kp * pv->Err + pm->kd * pv->dErr;
             if (abs(pv->Err) < DampingDividingEndValue)
             {
                 pv->DEMActive += 1;

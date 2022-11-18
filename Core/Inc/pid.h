@@ -21,8 +21,8 @@
 //模糊控制分界点
 #define DampingDividingEnableValue 50
 #define DampingDividingBeginValue 40
-#define DampingDividingEndValue 5
-#define MaxOscillatingPeriodNum 4
+#define DampingDividingEndValue 10
+#define MaxOscillatingPeriodNum 2
 //增强区内阻尼（kd）增益倍数
 //增强函数为 增强倍数/（1+误差）
 //注：如有更好的函数模型欢迎修改
