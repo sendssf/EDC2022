@@ -9,19 +9,13 @@
 #define pidFeq 20
 //限制pid输出值的绝对值
 #define pidLimit 1000
-#define dErrLastRaio 0.8
+#define dErrLastRaio 1
 //控制pwm输出的平滑程度，范围0~1，等于1时计算pwm只考虑当次的pid输出，否则考虑前后两次的pid输出，一般取值0.6~1
-#define pwmLastRatio 0.6
+#define pwmLastRatio 0.9
 //限制积分变量的绝对值
-#define IntegralLimit 500
+#define IntegralLimit 600
 //最大转速绝对值
 #define Maxrpm 2000
-
-//模糊控制（实验性）
-//模糊控制作用机制
-//模糊控制分界点
-#define ZoneTriggerErr 50
-#define ZoneEndErr 10
 
 //此结构体存储pid系数
 typedef struct
