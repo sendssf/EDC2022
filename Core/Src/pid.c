@@ -36,31 +36,9 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
         count -= 65535;
     }
     pv->rpm = count * pidFeq / CountPerRound;
-    pv->dErr = Tagrpm - pv->rpm - pv->Err;
+    pv->dErr = dErrLastRaio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErrLastRaio) * pv->dErr;
     pv->Err = Tagrpm - pv->rpm;
 
-    float output;
-    if (abs(pv->Err) > DampingDividingEnableValue)
-    {
-        pv->DEMActive = 0;
-    }
-    if (pv->DEMActive >= 0)
-    {
-        if (abs(pv->Err) < DampingDividingBeginValue)
-        { 
-            output = pm->kp * pv->Err + (DampingGain / (abs(pv->Err) + 1)) * pm->kd * pv->dErr;
-            if (abs(pv->Err) < DampingDividingEndValue)
-            {
-                pv->DEMActive += 1;
-                if (pv->DEMActive >= MaxOscillatingPeriodNum)
-                {
-                    pv->DEMActive == -1;
-                }
-            }
-            pv->pwm = pwmLastRatio * output + (1 - pwmLastRatio) * pv->pwm;
-            return pv->pwm;
-        }
-    }
     if (pv->ErrSum > IntegralLimit)
     {
         if (pv->Err < 0)
@@ -78,11 +56,24 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     else{
         pv->ErrSum += pv->Err;
     }
-    if (abs(pv->Err) > DampingDividingEnableValue)
+
+    if (abs(pv->Err) > ZoneTriggerErr)
     {
         pv->DEMActive = 0;
     }
-    output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
+    if (pv->DEMActive >= 0)
+    {
+        pv->Err = 0;
+        pv->dErr = 0;
+        if (abs(pv->Err) < ZoneEndErr)
+        {
+            pv->ErrSum = 0;
+            pv->DEMActive = -1;
+        }
+
+    }
+
+    float output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
     if (output > pidLimit)
     {
         output = pidLimit;
