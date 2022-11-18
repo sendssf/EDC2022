@@ -63,7 +63,6 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     }
     if (pv->DEMActive >= 0)
     {
-        pv->Err = 0;
         pv->dErr = 0;
         if (abs(pv->Err) < ZoneEndErr)
         {
