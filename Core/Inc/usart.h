@@ -36,7 +36,7 @@ extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN Private defines */
-extern unsigned char Message[14];
+extern unsigned char Message[17];
 /* USER CODE END Private defines */
 
 void MX_UART5_Init(void);

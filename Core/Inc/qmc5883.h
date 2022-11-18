@@ -1,3 +1,6 @@
+#ifndef QMC5883_H
+#define QMC5883_H
+
 #include "stdint.h"
 #define MAT_N  10
 #define QMC5883_ADDR               0x1a 
@@ -10,3 +13,5 @@ void QMC5883_WriteReg(uint8_t Val,uint8_t Reg);
 uint8_t QMC5883_ReadReg(uint8_t Reg);
 uint8_t QMC5883_InitConfig(void);
 void QMC5883_GetData(float *Magnet);
+
+#endif

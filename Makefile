@@ -65,7 +65,8 @@ Core/Src/move.c \
 Core/Src/dma.c \
 Core/Src/i2c.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c \
-Core/Src/qmc5883.c
+Core/Src/qmc5883.c \
+Core/Src/zigbee_edc24.c
 
 # ASM sources
 ASM_SOURCES =  \
