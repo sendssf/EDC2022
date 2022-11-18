@@ -137,7 +137,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    u2_printf("%f\r\n", GetAccZ());
     /* USER CODE BEGIN 3 */
 
   }
