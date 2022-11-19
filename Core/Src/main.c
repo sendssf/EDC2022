@@ -32,6 +32,7 @@
 #include "pid.h"
 #include "jy62.h"
 #include "move.h"
+#include "qmc5883.h"
 #include "delay.h"
 /* USER CODE END Includes */
 
@@ -123,23 +124,33 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�??????????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,16);
-  SetBaud(9600);
+  SetBaud(115200);
   SetHorizontal();
   InitAngle();
   Calibrate();
+  SleepOrAwake();
+  QMC5883_InitConfig();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  delay_ms(2000);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+    jy62_Init(&huart3);   
+    u2_printf("%fzc%f\r\n",GetAccX(),GetTemperature());
+    delay_ms(1000);
+    SleepOrAwake();
+    float asdfg[3];
+    //QMC5883_GetData(asdfg);
+    //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
+    //QMC5883_InitConfig();
   }
   /* USER CODE END 3 */
 }
@@ -202,7 +213,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
 
-    u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
+    //u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
     if (pwm_temp > 0)
     {
