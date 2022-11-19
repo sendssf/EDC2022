@@ -147,7 +147,7 @@ int main(void)
     u2_printf("%fzc%f\r\n",GetAccX(),GetTemperature());
     delay_ms(1000);
     SleepOrAwake();
-    //float asdfg[3];
+    float asdfg[3];
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
     //QMC5883_InitConfig();
