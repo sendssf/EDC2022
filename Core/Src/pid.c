@@ -7,7 +7,7 @@ void rpmpid_Init()
 {
     MypidParms.kp = 1.2;
     MypidParms.kd = 3.8;
-    MypidParms.ki = 0.8;
+    MypidParms.ki = 1;
 
     for (int i = 0; i < 4; i++)
     {
@@ -16,7 +16,6 @@ void rpmpid_Init()
         wheelpid[i].Err = 0;
         wheelpid[i].dErr = 0;
         wheelpid[i].ErrSum = 0;
-        wheelpid[i].DEMActive = -1;
     }
 }
 
@@ -55,22 +54,6 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     }
     else{
         pv->ErrSum += pv->Err;
-    }
-
-    if (abs(pv->Err) > ZoneTriggerErr)
-    {
-        pv->DEMActive = 0;
-    }
-    if (pv->DEMActive >= 0)
-    {
-        pv->Err = 0;
-        pv->dErr = 0;
-        if (abs(pv->Err) < ZoneEndErr)
-        {
-            pv->ErrSum = 0;
-            pv->DEMActive = -1;
-        }
-
     }
 
     float output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
