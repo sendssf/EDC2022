@@ -38,31 +38,6 @@ float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
     pv->dErr = dErrLastRaio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErrLastRaio) * pv->dErr;
     pv->Err = Tagrpm - pv->rpm;
 
-<<<<<<< HEAD
-    float output;
-    if (abs(pv->Err) > DampingDividingEnableValue)
-    {
-        pv->DEMActive = 0;
-    }
-    if (pv->DEMActive >= 0)
-    {
-        if (abs(pv->Err) < DampingDividingBeginValue)
-        { 
-            output = pm->kp * pv->Err + pm->kd * pv->dErr;
-            if (abs(pv->Err) < DampingDividingEndValue)
-            {
-                pv->DEMActive += 1;
-                if (pv->DEMActive >= MaxOscillatingPeriodNum)
-                {
-                    pv->DEMActive == -1;
-                }
-            }
-            pv->pwm = pwmLastRatio * output + (1 - pwmLastRatio) * pv->pwm;
-            return pv->pwm;
-        }
-    }
-=======
->>>>>>> a62afb36b2fb87ca5cc120a59d90c7099eb8df1b
     if (pv->ErrSum > IntegralLimit)
     {
         if (pv->Err < 0)
