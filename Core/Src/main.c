@@ -56,6 +56,8 @@
 extern float Setrpm[4];
 extern pidParms MypidParms;
 extern pidVars wheelpid[4];
+uint8_t rxData[JY_BUF_SIZE << 1];                     // Rx buffer for JY62
+float yaw = 0, yawRaw = 0, yawBias = 0, yawZero = 0;  // yaw angle
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,7 +68,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void JY_handler(uint8_t *);
 /* USER CODE END 0 */
 
 /**
@@ -124,14 +126,15 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
-  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�??????????
+  HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
+  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,16);
-  SetBaud(115200);
-  SetHorizontal();
-  InitAngle();
-  Calibrate();
-  SleepOrAwake();
+  //SetBaud(115200);
+  //SetHorizontal();
+  //InitAngle();
+  //Calibrate();
+  //SleepOrAwake();
   QMC5883_InitConfig();
   /* USER CODE END 2 */
 
@@ -143,10 +146,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    jy62_Init(&huart3);   
-    u2_printf("%fzc%f\r\n",GetAccX(),GetTemperature());
-    delay_ms(1000);
-    SleepOrAwake();
+    //jy62_Init(&huart3); 
+    delay_ms(10);  
+    u2_printf("%f %f %f %f\r\n",yaw,yawBias,yawRaw,yawZero);
     float asdfg[3];
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
@@ -258,6 +260,60 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     }
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim8, 0);
+  }
+}
+#define SUM0 (0x55u + 0x53u)
+void JY_handler(uint8_t *rx) {
+  static uint8_t angle[2], sum = SUM0, p = 0;
+  uint8_t rxi;
+  for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
+    rxi = rx[i];
+    switch (p) {
+      case 0:
+        p = rxi == 0x55u ? 1 : 0;
+        break;
+      case 1:
+        p = rxi == 0x53u ? 2 : 0;
+        break;
+      case 6:
+      case 7:
+        angle[p - 6] = rxi;
+        // no break
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 8:
+      case 9:
+        sum += rxi;
+        ++p;
+        break;
+      case 10:
+        if (rxi == sum) {
+          float y = calcAngle(angle[0], angle[1]);
+          float nextYawBias = yawBias;
+          if (y > yawRaw + 180) {
+            nextYawBias -= 360;
+          } else if (y < yawRaw - 180) {
+            nextYawBias += 360;
+          }
+          yawRaw = y;
+          float nextYaw = yawRaw + nextYawBias - yawZero;
+          if (abs(yaw - nextYaw) < 180) {
+            yaw = nextYaw;
+            yawBias = nextYawBias;
+          }
+          p = 0;
+          sum = SUM0;
+          return;
+        } else {
+          i = i >= 9 ? i - 9 : 0;
+        }
+        // no break
+      default:
+        p = 0;
+        sum = SUM0;
+    }
   }
 }
 /* USER CODE END 4 */
