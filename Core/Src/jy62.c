@@ -1,6 +1,7 @@
 
 /*-------------------------jy62.c----------------------------*/
 #include "jy62.h"
+#include "main.h"
 
 volatile uint8_t jy62Receive[JY62_MESSAGE_LENGTH];  //实时记录收到的信息
 volatile uint8_t jy62Message[JY62_MESSAGE_LENGTH];   //确认无误后用于解码的信息
@@ -131,28 +132,28 @@ float GetVeloZ()
 
 void DecodeAngle()
 {
-  Angle.roll = (float)((jy62Message[3] << 8) | jy62Message[2]) / 32768 * 180;
-  Angle.pitch = (float)((jy62Message[5] << 8) | jy62Message[4]) / 32768 * 180;
-  Angle.yaw = (float)((jy62Message[7] << 8) | jy62Message[6]) / 32768 * 180;
+  Angle.roll = ((float)((rxData[3] << 8) | rxData[2])) * 180/32768;
+  Angle.pitch = ((float)((rxData[5] << 8) | rxData[4])) * 180/32768;
+  Angle.yaw = ((float)((rxData[7] << 8) | rxData[6])) * 180/32768;
 }
 
 void DecodeAccelerate()
 {
-  Accelerate.accelerate_x = (float)((jy62Message[3] << 8) | jy62Message[2]) / 32768 * 16 * g ;
-  Accelerate.accelerate_y = (float)((jy62Message[5] << 8) | jy62Message[4]) / 32768 * 16 * g ;
-  Accelerate.accelerate_z = (float)((jy62Message[7] << 8) | jy62Message[6]) / 32768 * 16 * g ;
+  Accelerate.accelerate_x = ((float)((rxData[3] << 8) | rxData[2]))* 16 * g / 32768  ;
+  Accelerate.accelerate_y = ((float)((rxData[5] << 8) | rxData[4]))* 16 * g / 32768 ;
+  Accelerate.accelerate_z = ((float)((rxData[7] << 8) | rxData[6]))* 16 * g / 32768 ;
 }
 
 void DecodeVelocity()
 { 
-  Velocity.velocity_x = (float)((jy62Message[3] << 8) | jy62Message[2]) / 32768 * 2000 ;
-  Velocity.velocity_y = (float)((jy62Message[5] << 8) | jy62Message[4]) / 32768 * 2000 ;
-  Velocity.velocity_z = (float)((jy62Message[7] << 8) | jy62Message[6]) / 32768 * 2000 ;
+  Velocity.velocity_x = ((float)((rxData[3] << 8) | rxData[2])) * 2000/ 32768 ;
+  Velocity.velocity_y = ((float)((rxData[5] << 8) | rxData[4]))  * 2000/ 32768 ;
+  Velocity.velocity_z = ((float)((rxData[7] << 8) | rxData[6]))  * 2000/ 32768 ;
 }
 
 void DecodeTemperature()
 {
-  Temperature.temperature = ((short)(jy62Message[9]) << 8 | jy62Message[8]) / 340 + 36.53;
+  Temperature.temperature = ((short)(rxData[9]) << 8 | rxData[8]) / 340 + 36.53;
 } 
 
 void Decode()

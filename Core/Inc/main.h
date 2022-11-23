@@ -32,17 +32,19 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define JY_BUF_SIZE 33
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+#define calcAngle(L, H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) / 8192.0f * 45.0f)
+#define calAcc(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L))* g / 2048)
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+extern uint8_t rxData[JY_BUF_SIZE << 1];
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
