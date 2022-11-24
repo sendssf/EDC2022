@@ -86,7 +86,7 @@ void SleepOrAwake()
 
 float GetRoll()
 {
-  return Angle.roll;
+  return calcAngle(rxData[3],rxData[2]);
 }
 float GetPitch()
 {
@@ -132,8 +132,8 @@ float GetVeloZ()
 
 void DecodeAngle()
 {
-  Angle.roll = ((float)((rxData[3] << 8) | rxData[2])) * 180/32768;
-  Angle.pitch = ((float)((rxData[5] << 8) | rxData[4])) * 180/32768;
+  Angle.roll = ((float)((rxData[3] << 8) | rxData[2])) * 180 / 32768;
+  Angle.pitch = ((float)((rxData[5] << 8) | rxData[4])) * 180 / 32768;
   Angle.yaw = ((float)((rxData[7] << 8) | rxData[6])) * 180/32768;
 }
 

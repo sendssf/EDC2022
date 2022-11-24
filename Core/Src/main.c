@@ -57,7 +57,9 @@ extern float Setrpm[4];
 extern pidParms MypidParms;
 extern pidVars wheelpid[4];
 uint8_t rxData[JY_BUF_SIZE << 1];                     // Rx buffer for JY62
-float yaw = 0, yawRaw = 0, yawBias = 0, yawZero = 0;  // yaw angle
+
+struct JY62_Mes JY62;
+struct JY62_Data jy62data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,6 +71,9 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void JY_handler(uint8_t *);
+void Accdecode(uint8_t *rx);
+void Velodecode(uint8_t *rx);
+void Angledecode(uint8_t *rx);
 /* USER CODE END 0 */
 
 /**
@@ -148,7 +153,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
     //jy62_Init(&huart3); 
     delay_ms(10);  
-    u2_printf("%f %f %f %f\r\n",yaw,yawBias,yawRaw,yawZero);
     float asdfg[3];
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
@@ -262,9 +266,127 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SET_COUNTER(&htim8, 0);
   }
 }
-#define SUM0 (0x55u + 0x53u)
+
 void JY_handler(uint8_t *rx) {
-  static uint8_t angle[2], sum = SUM0, p = 0;
+  Angledecode(rx);
+}
+
+void Accdecode(uint8_t *rx){   //加速度解码
+  static uint8_t sum = SUMACC, p = 0;
+  uint8_t rxi;
+  for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
+    rxi = rx[i];
+    switch (p) {
+      case 0:
+        p = rxi == 0x55u ? 1 : 0;
+        break;
+      case 1:
+        p = rxi == 0x51u ? 2 : 0;
+        break;
+      case 6:
+      case 7:
+        JY62.accz[p - 6] = rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 2:
+      case 3:
+        JY62.accx[p-2]=rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 4:
+      case 5:
+        JY62.accy[p-4]=rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 8:
+      case 9:
+        JY62.temperature[p-8]=rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 10:
+        if (rxi == sum) {
+          jy62data.accxRaw=calAcc(JY62.accx[0],JY62.accx[1]);
+          jy62data.accyRaw=calAcc(JY62.accy[0],JY62.accy[1]);
+          jy62data.acczRaw=calAcc(JY62.accz[0],JY62.accz[1]);
+          //处理数据
+          p=0;
+          sum=SUMACC;
+          return;
+        } 
+        else {
+          i = i >= 9 ? i - 9 : 0;
+        }
+        // no break
+      default:
+        p = 0;
+        sum = SUMACC;
+    }
+  }
+}
+
+void Velodecode(uint8_t *rx){    //角速度解码
+  static uint8_t sum = SUMVELO, p = 0;
+  uint8_t rxi;
+  for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
+    rxi = rx[i];
+    switch (p) {
+      case 0:
+        p = rxi == 0x55u ? 1 : 0;
+        break;
+      case 1:
+        p = rxi == 0x52u ? 2 : 0;
+        break;
+      case 6:
+      case 7:
+        JY62.veloz[p - 6] = rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 2:
+      case 3:
+        JY62.velox[p - 2] = rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 4:
+      case 5:
+        JY62.veloy[p - 4] = rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 8:
+      case 9:
+        JY62.temperature[p - 8]=rxi;
+        sum += rxi;
+        ++p;
+        break;
+      case 10:
+        if (rxi == sum) {
+          jy62data.velox=calVelox(JY62.velox[0],JY62.velox[1]);
+          jy62data.veloy=calVelox(JY62.veloy[0],JY62.veloy[1]);
+          jy62data.velox=calVelox(JY62.veloz[0],JY62.veloz[1]);
+          //处理数据
+          p=0;
+          sum=SUMVELO;
+          return;
+        } 
+        else {
+          i = i >= 9 ? i - 9 : 0;
+        }
+        // no break
+      default:
+        p = 0;
+        sum = SUMVELO;
+    }
+  }
+}
+
+void Angledecode(uint8_t *rx){
+  static uint8_t sum = SUMANGLE, p = 0;
   uint8_t rxi;
   for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
     rxi = rx[i];
@@ -277,42 +399,84 @@ void JY_handler(uint8_t *rx) {
         break;
       case 6:
       case 7:
-        angle[p - 6] = rxi;
-        // no break
+        JY62.angleyaw[p - 6] = rxi;
+        sum += rxi;
+        ++p;
+        break;
       case 2:
       case 3:
+        JY62.angleroll[p-2] = rxi;
+        sum += rxi;
+        ++p;
+        break;
       case 4:
       case 5:
+        JY62.anglepitch[p-4]=rxi;
+        sum += rxi;
+        ++p;
+        break;
       case 8:
       case 9:
+        JY62.temperature[p-8]=rxi;
         sum += rxi;
         ++p;
         break;
       case 10:
         if (rxi == sum) {
-          float y = calcAngle(angle[0], angle[1]);
-          float nextYawBias = yawBias;
-          if (y > yawRaw + 180) {
+          float z = calcAngle(JY62.angleyaw[0], JY62.angleyaw[1]);
+          float x = calcAngle(JY62.angleroll[0],JY62.angleroll[1]);
+          float y = calcAngle(JY62.anglepitch[0],JY62.anglepitch[1]);
+
+          float nextYawBias = jy62data.yawBias;
+          float nextRollBias = jy62data.rollBias;
+          float nextPitchBias = jy62data.pitchBias;
+          if (z > jy62data.yawRaw + 180) {
             nextYawBias -= 360;
-          } else if (y < yawRaw - 180) {
+          } 
+          else if (z < jy62data.yawRaw - 180) {
             nextYawBias += 360;
           }
-          yawRaw = y;
-          float nextYaw = yawRaw + nextYawBias - yawZero;
-          if (abs(yaw - nextYaw) < 180) {
-            yaw = nextYaw;
-            yawBias = nextYawBias;
+          if (y > jy62data.pitchRaw + 180) {
+            nextPitchBias -= 360;
+          } 
+          else if (y < jy62data.pitchRaw - 180) {
+            nextPitchBias += 360;
+          }
+          if (x > jy62data.rollRaw + 180) {
+            nextRollBias -= 360;
+          } 
+          else if (x < jy62data.rollRaw - 180) {
+            nextRollBias += 360;
+          }
+          jy62data.yawRaw = z;
+          jy62data.pitchRaw=y;
+          jy62data.rollRaw=x;
+          float nextYaw = jy62data.yawRaw + nextYawBias - jy62data.yawZero;
+          float nextRoll = jy62data.rollRaw + nextRollBias - jy62data.rollZero;
+          float nextPitch = jy62data.pitchRaw + nextPitchBias - jy62data.pitchZero;
+          if (abs(jy62data.yaw - nextYaw) < 180) {
+            jy62data.yaw = nextYaw;
+            jy62data.yawBias = nextYawBias;
+          }
+          if (abs(jy62data.pitch - nextPitch) < 180) {
+            jy62data.pitch = nextPitch;
+            jy62data.pitchBias = nextPitchBias;
+          }
+          if (abs(jy62data.roll - nextRoll) < 180) {
+            jy62data.roll = nextRoll;
+            jy62data.rollBias = nextRollBias;
           }
           p = 0;
-          sum = SUM0;
+          sum = SUMANGLE;
           return;
-        } else {
+        } 
+        else {
           i = i >= 9 ? i - 9 : 0;
         }
         // no break
       default:
         p = 0;
-        sum = SUM0;
+        sum = SUMANGLE;
     }
   }
 }
