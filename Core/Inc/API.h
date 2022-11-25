@@ -22,7 +22,7 @@ typedef struct {
 typedef struct{
     Position Charger[3];
     uint8_t chargernum;
-} ChargerInfo;
+} ChargerInfo; 
 
 //结构体，用来存储小车经过的点，为循环队列
 typedef struct{
