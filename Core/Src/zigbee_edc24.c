@@ -16,7 +16,7 @@ UART_HandleTypeDef* zigbee_huart;
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-  if (huart->Instance == USART2)
+  if (huart->Instance == USART3)
   {
     __HAL_UNLOCK(zigbee_huart);
     receive_flag=0;
@@ -26,7 +26,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef* huart,uint16_t Size)
 {
-    if(huart->Instance==USART2)//注意这里要修改，和使用的串口对应
+    if(huart->Instance==USART3)//注意这里要修改，和使用的串口对应
     {
         receive_flag=1;
     }

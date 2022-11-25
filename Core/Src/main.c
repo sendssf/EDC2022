@@ -34,6 +34,7 @@
 #include "move.h"
 #include "qmc5883.h"
 #include "delay.h"
+#include "zigbee_edc24.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -141,6 +142,8 @@ int main(void)
   //Calibrate();
   //SleepOrAwake();
   QMC5883_InitConfig();
+  zigbee_Init(&huart3);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -152,7 +155,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     //jy62_Init(&huart3); 
-    delay_ms(10);  
+    delay_ms(10); 
+    Barrier_edc24 b=getOneBarrier(0); 
+    u2_printf("%d %d %d %d\r\n",b.pos_1.x,b.pos_1.y,b.pos_2.x,b.pos_2.y);
     float asdfg[3];
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
@@ -269,6 +274,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
 void JY_handler(uint8_t *rx) {
   Angledecode(rx);
+  Velodecode(rx);
+  Accdecode(rx);
 }
 
 void Accdecode(uint8_t *rx){   //加速度解码
@@ -366,9 +373,9 @@ void Velodecode(uint8_t *rx){    //角速度解码
         break;
       case 10:
         if (rxi == sum) {
-          jy62data.velox=calVelox(JY62.velox[0],JY62.velox[1]);
-          jy62data.veloy=calVelox(JY62.veloy[0],JY62.veloy[1]);
-          jy62data.velox=calVelox(JY62.veloz[0],JY62.veloz[1]);
+          jy62data.veloxRaw=calVelox(JY62.velox[0],JY62.velox[1]);
+          jy62data.veloyRaw=calVelox(JY62.veloy[0],JY62.veloy[1]);
+          jy62data.velozRaw=calVelox(JY62.veloz[0],JY62.veloz[1]);
           //处理数据
           p=0;
           sum=SUMVELO;

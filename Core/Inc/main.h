@@ -42,7 +42,7 @@ extern "C" {
 #define SUMACC (0x55u+0x51u)
 #define calcAngle(L, H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) / 8192.0f * 45.0f)
 #define calAcc(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L))* g / 2048.0f)
-#define calVelox(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) / 2048.0f * 125.0f)
+#define calVelox(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) /2048.0f * 125.0f)
 #define cal
 /* USER CODE END ET */
 
