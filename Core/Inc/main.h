@@ -32,17 +32,57 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define JY_BUF_SIZE 33
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+#define SUMANGLE (0x55u + 0x53u)
+#define SUMVELO (0x55u+0x52u)
+#define SUMACC (0x55u+0x51u)
+#define calcAngle(L, H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) / 8192.0f * 45.0f)
+#define calAcc(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L))* g / 2048.0f)
+#define calVelox(L,H) ((float)(((uint16_t)(H) << 8) | (uint16_t)(L)) /2048.0f * 125.0f)
+#define cal
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+extern uint8_t rxData[JY_BUF_SIZE << 1];
 
+struct JY62_Mes{
+  uint8_t angleyaw[2];
+  uint8_t anglepitch[2];
+  uint8_t angleroll[2];
+  uint8_t accx[2];
+  uint8_t accz[2];
+  uint8_t accy[2];
+  uint8_t velox[2];
+  uint8_t veloy[2];
+  uint8_t veloz[2];
+
+  uint8_t temperature[2];
+};
+
+//raw 用来存储读出的原始数据，实时更新
+struct JY62_Data{
+  float yaw, yawRaw, yawBias, yawZero;
+  float roll, rollRaw,rollBias,rollZero;
+  float pitch,pitchRaw,pitchBias,pitchZero;
+
+  float accx,accxRaw,accxBias,accxZero;
+  float accy,accyRaw,accyBias,accyZero;
+  float accz,acczRaw,acczBias,acczZero;
+
+  float velox,veloxRaw,veloxBias,veloxZero;
+  float veloy,veloyRaw,veloyBias,veloyZero;
+  float veloz,velozRaw,velozBias,velozZero;
+
+  float temperature;
+};
+
+extern struct JY62_Mes JY62;
+extern struct JY62_Data jy62data;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

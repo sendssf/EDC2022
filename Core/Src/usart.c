@@ -28,6 +28,7 @@
 #include "stdio.h"
 #include "move.h"
 #include "pid.h"
+#include "zigbee_edc24.h"
 
 unsigned char Message[17];
 /* USER CODE END 0 */
@@ -193,7 +194,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart3_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_usart3_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_usart3_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart3_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart3_rx.Init.Mode = DMA_CIRCULAR;
     hdma_usart3_rx.Init.Priority = DMA_PRIORITY_HIGH;
     if (HAL_DMA_Init(&hdma_usart3_rx) != HAL_OK)
     {
@@ -324,9 +325,8 @@ void u3_printf(char* fmt, ...) { // usart.c末尾
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-    if(huart == &huart3)
-    {
-      jy62MessageRecord();
+    if (huart == &huart3) {
+        //JY_handler(rxData);
     }
     else if(huart==&huart2){
       int16_t temp1,temp2,temp3;
@@ -346,6 +346,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
       //u2_printf("OK %d %d %d\r\n",temp1,temp2,temp3);
       HAL_UART_Receive_IT(&huart2,Message,16);
     }
+}
+
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
+  if (huart == &huart3) {
+    //JY_handler(rxData);
+
+  }
 }
 /* USER CODE END 1 */
 
