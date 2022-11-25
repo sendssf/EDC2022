@@ -213,7 +213,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
 
-    //u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
     pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
     if (pwm_temp > 0)
     {
