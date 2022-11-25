@@ -1,5 +1,32 @@
 #include "dijkstra.h"
 
+Graph G;
+void InitNode(){//初始化节点表（不包含充电站，第一个点为自己位置）
+    uint8_t i = 1;
+    GetMyPos(Vnode[0]);
+    Node* food1 = foodlist;
+    while (food1)
+    {
+        Vnode[i++] = food1->food.start;
+        Vnode[i++] = food1->food.end;
+    }
+    for(uint8_t j = 0; j < blocknum; j++){
+        Vnode[i+j].x = block[j].upleft.x - 1;
+        Vnode[i+j].y = block[j].upleft.y - 1;
+        i++;
+        Vnode[i+j].x = block[j].downright.x + 1;
+        Vnode[i+j].y = block[j].upleft.y - 1;
+        i++;
+        Vnode[i+j].x = block[j].upleft.x - 1;
+        Vnode[i+j].y = block[j].downright.y + 1;
+        i++;
+        Vnode[i+j].x = block[j].downright.x + 1;
+        Vnode[i+j].y = block[j].downright.y + 1;
+        i++;
+    }
+    G.n = i+blocknum;
+}
+
 double dis(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) { // 计算两个二维点坐标距离
         return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -50,67 +77,22 @@ bool checkline(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2){//判断两点是否
     }
     return false;
 }
-void connectNei() { // 邻居连边
-        edge.resize(rows * cols);
-        for (auto [x, y] : point) {
-            for (auto [nx, ny] : point) {
-                if (nx == x && ny == y)
-                    continue;
-                if (dis(x, y, nx, ny) < neiDis && checkLine(x, y, nx, ny)) {
-                    e dge[two2one(x, y)].push_back(two2one(nx, ny));
-                    edge[two2one(nx, ny)].push_back(two2one(x, y));
-                }
-            }
-        }
-    }
-
  
-typedef struct
-{
-	int num;
-	char info;
-}VertexType;
- 
-typedef struct
-{
-	int edges[maxSize][maxSize];
-	int n, e;//顶点数，和边数
-	VertexType vex[maxSize];//存放结点信息
-}MGraph;
- 
-MGraph G;
-int visit[maxSize];
- 
-void BuildGraph()
-{
-	int i,j;
-	int v1, v2,w;
- 
+void BuildGraph(){ 
 	//Create Graph
-	scanf("%d",&G.n);
-	for (i = 0; i < G.n; ++i)
-		for (j = 0; j < G.n; j++)
-			G.edges[i][j] = 0;//若为有向边则赋值为INF
- 
-	scanf("%d", &G.e);
-	for (i = 0; i < G.e; i++)
-	{
-		scanf("%d%d%d", &v1, &v2, &w);
-		//Insert Edges
-		G.edges[v1][v2] = w;
-		G.edges[v2][v1] = w;//若为无向边，则对称位置权值相等
-	}
- 
-	/*顶点有数据的话，则读入数据*/
-	for ( i = 0; i < G.n; i++)
-	{
-		G.vex[i].num = i;//顶点编号
-		getchar();//消化输入的换行符
-		scanf("%c", &G.vex[i].info);//顶点其他信息
-	}
- 
-}
-
-void build_graph(){
-
+	for (uint8_t i = 0; i < MaxNum; i++)
+		for (uint8_t j = 0; j < MaxNum; j++)
+			G.edges[i][j] = 32767;
+            
+	for (uint8_t i = 0; i < G.n; i++){
+		for (uint8_t j = 0; j < G.n; j++){
+            uint8_t x = Vnode[i].x, y = Vnode[i].y,nx = Vnode[j].nx,ny = Vnode[j].ny;
+		    if (nx == x && ny == y)
+                G.edges[i][j] = 0;
+            if (checkLine(x, y, nx, ny)) {
+                G.edges[i][j] = dis(x, y, nx, ny);
+                G.edges[j][i] = dis(x, y, nx, ny);
+            }
+	    }
+    }
 }
