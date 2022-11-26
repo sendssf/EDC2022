@@ -110,6 +110,11 @@ void Error_Handler(void);
 #define COUNTER3A_GPIO_Port GPIOA
 #define COUNTER3B_Pin GPIO_PIN_1
 #define COUNTER3B_GPIO_Port GPIOA
+#define SigOut_Pin GPIO_PIN_5
+#define SigOut_GPIO_Port GPIOA
+#define SigIn_Pin GPIO_PIN_6
+#define SigIn_GPIO_Port GPIOA
+#define SigIn_EXTI_IRQn EXTI9_5_IRQn
 #define ROLL2_IN2_Pin GPIO_PIN_12
 #define ROLL2_IN2_GPIO_Port GPIOB
 #define ROLL2_IN1_Pin GPIO_PIN_13

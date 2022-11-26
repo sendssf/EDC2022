@@ -133,7 +133,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
   HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
-  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
+  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?????????????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,16);
   //SetBaud(115200);
@@ -271,13 +271,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   }
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == SigIn_Pin)
+  {
+    PAout(5) = 1;
+  }
+}
+
 void JY_handler(uint8_t *rx) {
   Angledecode(rx);
   Velodecode(rx);
   Accdecode(rx);
 }
 
-void Accdecode(uint8_t *rx){   //加速度解码
+void Accdecode(uint8_t *rx){   //加�?�度解码
   static uint8_t sum = SUMACC, p = 0;
   uint8_t rxi;
   for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
@@ -334,7 +342,7 @@ void Accdecode(uint8_t *rx){   //加速度解码
   }
 }
 
-void Velodecode(uint8_t *rx){    //角速度解码
+void Velodecode(uint8_t *rx){    //角�?�度解码
   static uint8_t sum = SUMVELO, p = 0;
   uint8_t rxi;
   for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {

@@ -16,7 +16,7 @@ uint8_t QMC5883_ReadReg(uint8_t Reg)
 
 void QMC5883_WriteReg(uint8_t Val,uint8_t Reg)
 {
-    I2C_WriteByte(Val,Reg, QMC5883_ADDR);
+    I2C_WriteByte(Val,Reg,QMC5883_ADDR);
 }
 
 uint8_t QMC5883_InitConfig(void)
@@ -29,7 +29,7 @@ uint8_t QMC5883_InitConfig(void)
 	QMC5883_WriteReg(0x0D, 0x09);/****OSR=512,RNG=+/-2G,ODR=200Hz,MODE= continuous*******/
 	delay_ms(TIME_DELAY);
 	Temp = QMC5883_ReadReg(0x09);
-	 while(Temp != 0x0D) return 1;
+	while(Temp != 0x0D) return 1;
 	
     return 0;
 }
