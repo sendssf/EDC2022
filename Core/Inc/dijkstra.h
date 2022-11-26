@@ -22,6 +22,5 @@ typedef struct
 Position Vnode[MaxNum];
 double distance[MaxNum];
 bool visited[MaxNum];
-std::priority_queue<std::pair<double, int> >q;
 
 #endif

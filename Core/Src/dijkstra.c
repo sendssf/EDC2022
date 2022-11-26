@@ -1,4 +1,5 @@
 #include "dijkstra.h"
+#include "queue.h"
 
 Graph G;
 
