@@ -1,6 +1,16 @@
 #include "dijkstra.h"
+#include "queue.h"
 
 Graph G;
+
+int two2one(int x, int y) { // 将二维坐标转换成一维
+    return x * 255 + y;
+}
+
+pair<int, int> one2two(int id) { // 将一维坐标转换成二维
+    return { id / 255, id % 255 };
+}
+
 void InitNode(){//初始化节点表（不包含充电站，第一个点为自己位置）
     uint8_t i = 1;
     GetMyPos(Vnode[0]);
@@ -80,9 +90,9 @@ bool checkline(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2){//判断两点是否
  
 void BuildGraph(){ 
 	//Create Graph
-	for (uint8_t i = 0; i < MaxNum; i++)
-		for (uint8_t j = 0; j < MaxNum; j++)
-			G.edges[i][j] = 32767;
+	for (uint8_t i = 0; i < G.n; i++)
+		for (uint8_t j = 0; j < G.n; j++)
+			G.edges[i][j] = 1e7 + 7;
             
 	for (uint8_t i = 0; i < G.n; i++){
 		for (uint8_t j = 0; j < G.n; j++){
@@ -95,4 +105,42 @@ void BuildGraph(){
             }
 	    }
     }
+}
+
+void dijkstra(){
+    vector<int> pre(cols * rows); // 记录点的前驱
+    vector<bool> vis(cols * rows, false);
+    double oo = 1e9 + 7;
+    vector<double> distance(cols * rows, oo);
+    priority_queue<pair<double, int>> team;
+
+    uint8_t u;
+    double w;
+    for (uint8_t i = 0; i < G.n; i++){
+        distance[i] = 1e7 + 7;
+        visited[i] = false;
+    }
+    q.push({ 0, 0 });
+    distance[0] = 0;
+    while (!q.empty()) { // dijkstra主要部分
+        u = q.top().second;
+        q.pop();
+        if (visited[u] == true)
+            continue;
+        visited[u] = true;
+        for (uint8_t i = 0;i < G.n;i++) {
+			if( (distance[u] + G.edges[u][i]) < distance[i] && visited[i] == false){
+				distance[i]=distance[u] + G.edges[u][i];
+		        q.push(()distance[i]*(-1), i);
+			}
+        }
+    }
+    if (distance[two2one(ex, ey)] == oo) {
+        printf("WARNING: CANNOT Find a path from start point to target point!\n");
+        exit(0);
+    }
+    for (int u = two2one(ex, ey); u != two2one(sx, sy); u = pre[u])
+        path.push_back(u);
+    path.push_back(two2one(sx, sy));
+    reverse(path.begin(), path.end()); // 反转，使第一个点为起点
 }

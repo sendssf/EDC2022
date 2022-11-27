@@ -34,6 +34,7 @@
 #include "qmc5883.h"
 #include "delay.h"
 #include "zigbee_edc24.h"
+#include "dijkstra.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -158,6 +159,7 @@ int main(void)
     Barrier_edc24 b=getOneBarrier(0); 
     u2_printf("%d %d %d %d\r\n",b.pos_1.x,b.pos_1.y,b.pos_2.x,b.pos_2.y);
     float asdfg[3];
+    dijkstra();
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
     //QMC5883_InitConfig();
