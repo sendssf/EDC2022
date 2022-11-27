@@ -2,9 +2,7 @@
 #define MOVE_H
 
 #include "stdint.h"
-
-//绝对值
-#define abs (x<0?-x:x)
+#include "math.h"
 
 //每转一圈编码盘计数
 #define CountPerRound 13
