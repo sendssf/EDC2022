@@ -15,7 +15,7 @@ uint16_t LeftC(uint16_t i){
 
 uint16_t RightC(uint16_t i){
     int right=2*i+2;
-    if(right>=n){
+    if(right>=i){
         return -1;
     }
     else {
