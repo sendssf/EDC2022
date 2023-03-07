@@ -3,6 +3,8 @@
 
 #include "stdint.h"
 #include "math.h"
+#include "jy62.h"
+#include "qmc5883.h"
 
 //每转一圈编码盘计数
 #define CountPerRound 13
@@ -41,9 +43,20 @@ typedef struct
     int8_t DEMActive;
 }pidVars;
 
+typedef struct
+{
+    float accx, accy, accz;
+    float velox, veloy, veloz;
+    float pitch, yaw, roll;
+}StateInfo;
+
 //基本移动函数，分别控制前后、左右、旋转分量来控制移动
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis);
 
 void MoveByPCLDeg();
+
+float GetYaw();
+
+void PidCalucate();
 
 #endif
