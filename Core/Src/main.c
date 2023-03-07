@@ -134,16 +134,16 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
   HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
-  //jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�?????????????
+  jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
   rpmpid_Init();
   HAL_UART_Receive_IT(&huart2,Message,16);
-  //SetBaud(115200);
-  //SetHorizontal();
-  //InitAngle();
-  //Calibrate();
+  SetBaud(115200);
+  SetHorizontal();
+  InitAngle();
+  Calibrate();
   //SleepOrAwake();
   QMC5883_InitConfig();
-  zigbee_Init(&huart3);
+  //zigbee_Init(&huart3);
 
   /* USER CODE END 2 */
 
@@ -157,10 +157,12 @@ int main(void)
     /* USER CODE BEGIN 3 */
     //jy62_Init(&huart3); 
     delay_ms(10); 
-    Barrier_edc24 b=getOneBarrier(0); 
-    u2_printf("%d %d %d %d\r\n",b.pos_1.x,b.pos_1.y,b.pos_2.x,b.pos_2.y);
-    float asdfg[3];
-    dijkstra();
+    //Barrier_edc24 b=getOneBarrier(0); 
+    //u2_printf("sb");
+    //u2_printf("yaw:%6f    roll:%6f    pitch:%6f\r\n",jy62data.yaw,jy62data.roll,jy62data.pitch);
+    u2_printf("%d,%d,%d,%d,%d\r\n",100,-1*(int)wheelpid[0].rpm,-1*(int)wheelpid[1].rpm,-1*(int)wheelpid[2].rpm,(int)wheelpid[3].rpm);
+    //float asdfg[3];
+    //dijkstra();
     //QMC5883_GetData(asdfg);
     //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
     //QMC5883_InitConfig();

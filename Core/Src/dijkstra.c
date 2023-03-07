@@ -1,4 +1,4 @@
-#include "dijkstra.h"
+/* #include "dijkstra.h"
 #include "queue.h"
 
 Graph G;
@@ -7,9 +7,9 @@ int two2one(int x, int y) { // 将二维坐标转换成一维
     return x * 255 + y;
 }
 
-pair<int, int> one2two(int id) { // 将一维坐标转换成二维
-    return { id / 255, id % 255 };
-}
+//pair<int, int> one2two(int id) { // 将一维坐标转换成二维
+//    return { id / 255, id % 255 };
+//}
 
 void InitNode(){//初始化节点表（不包含充电站，第一个点为自己位置）
     uint8_t i = 1;
@@ -108,10 +108,10 @@ void BuildGraph(){
 }
 
 void dijkstra(){
-    vector<int> pre(cols * rows); // 记录点的前驱
-    vector<bool> vis(cols * rows, false);
+    //vector<int> pre(cols * rows); // 记录点的前驱
+    //vector<bool> vis(cols * rows, false);
     double oo = 1e9 + 7;
-    vector<double> distance(cols * rows, oo);
+    //vector<double> distance(cols * rows, oo);
     priority_queue<pair<double, int>> team;
 
     uint8_t u;
@@ -140,7 +140,8 @@ void dijkstra(){
         exit(0);
     }
     for (int u = two2one(ex, ey); u != two2one(sx, sy); u = pre[u])
-        path.push_back(u);
-    path.push_back(two2one(sx, sy));
+        //path.push_back(u);
+    //path.push_back(two2one(sx, sy));
     reverse(path.begin(), path.end()); // 反转，使第一个点为起点
 }
+ */
