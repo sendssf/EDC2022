@@ -78,21 +78,6 @@ void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
     SetRpm[3] = (onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
 }
 
-void MoveByPCLDeg()
-{
-    GetMyPos(&CurPos);
-    if ((AimPos.x - CurPos.x) ^ 2 + (AimPos.y - CurPos.y) ^ 2 < 60)
-    {
-        MoveBasic(0, 0, 0);
-        PAout(5) = 0;
-        return;
-    }
-}
-
-float GetYaw()
-{
-    return jy62_GetYaw();
-}
 
 void PidCalucate()
 {
@@ -140,4 +125,5 @@ void PidCalucate()
 void MoveByAbs(int Forward, int Left)
 {
     PidCalucate();
+    
 }

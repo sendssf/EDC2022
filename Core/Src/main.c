@@ -54,7 +54,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern float Setrpm[4];
+extern float SetRpm[4];
 extern pidParms MyPidParms;
 extern pidVars WheelPid[4];
 extern WheelCounts[4];
@@ -160,7 +160,7 @@ int main(void)
     //Barrier_edc24 b=getOneBarrier(0); 
     //u2_printf("sb");
     //u2_printf("yaw:%6f    roll:%6f    pitch:%6f\r\n",jy62data.yaw,jy62data.roll,jy62data.pitch);
-    u2_printf("%d,%d,%d,%d,%d\r\n",100,-1*(int)wheelpid[0].rpm,-1*(int)wheelpid[1].rpm,-1*(int)wheelpid[2].rpm,(int)wheelpid[3].rpm);
+    u2_printf("%d,%d,%d,%d,%d\r\n",100,-1*(int)WheelPid[0].rpm,-1*(int)WheelPid[1].rpm,-1*(int)WheelPid[2].rpm,(int)WheelPid[3].rpm);
     //float asdfg[3];
     //dijkstra();
     //QMC5883_GetData(asdfg);
