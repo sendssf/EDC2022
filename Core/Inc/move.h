@@ -39,12 +39,14 @@ typedef struct
     float Err;
     float dErr;
     float ErrSum;
-    int8_t DEMActive;
 }WheelPidVars;
 
 //此结构体存储小车方向pid变量
 typedef struct 
 {
+    float currentx;
+    float currenty;
+    float dYawOutput;
     float Err;
     float dErr;
     float ErrSum;
