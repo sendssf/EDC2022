@@ -3,21 +3,14 @@
 #include "system.h"
 //#include "main.h"
 
-pidParms MyPidParms;
-pidVars WheelPid[4];
+PidParms WheelPidParms, YawPidParms;
+WheelPidVars WheelPid[4];
+YawPidVars YawPid[4];
 float SetRpm[4];
 int WheelCounts[4];
-//Position AimPos, CurPos;
 
-extern struct JY62_Data jy62data;
-
-void rpmpid_Init()
+void InitPid()
 {
-    MyPidParms.kp = 1.2;
-    MyPidParms.kd = 3.8;
-    MyPidParms.ki = 1;
-    
-
     for (int i = 0; i < 4; i++)
     {
         WheelPid[i].rpm = 0;
@@ -25,61 +18,21 @@ void rpmpid_Init()
         WheelPid[i].Err = 0;
         WheelPid[i].dErr = 0;
         WheelPid[i].ErrSum = 0;
+        YawPid[i].Err = 0;
+        YawPid[i].dErr = 0;
+        YawPid[i].ErrSum = 0;
     }
 }
 
-
-float Getrpmpid(pidParms* pm, pidVars* pv, int count, float Tagrpm)
-{ 
-    if (count > 65535 - Maxrpm)
-    {
-        count -= 65535;
-    }
-    pv->rpm = count * pidFeq / CountPerRound;
-    pv->dErr = dErrLastRaio * (Tagrpm - pv->rpm - pv->Err) + (1 - dErrLastRaio) * pv->dErr;
-    pv->Err = Tagrpm - pv->rpm;
-
-    if (pv->ErrSum > IntegralLimit)
-    {
-        if (pv->Err < 0)
-        {
-            pv->ErrSum += pv->Err;
-        }
-    }
-    else if (pv->ErrSum < -IntegralLimit)
-    {
-        if (pv->Err > 0)
-        {
-            pv->ErrSum += pv->Err;
-        }
-    }
-    else{
-        pv->ErrSum += pv->Err;
-    }
-
-    float output = pm->kp * pv->Err + pm->kd * pv->dErr + pm->ki * pv->ErrSum;
-    if (output > pidLimit)
-    {
-        output = pidLimit;
-    }
-    else if (output < -pidLimit)
-    {
-        output = -pidLimit;
-    }
-    pv->pwm = pwmLastRatio * output + (1 - pwmLastRatio) * pv->pwm;
-    return pv->pwm;
-}
-
-void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
+void SetWheelCount(int w1, int w2, int w3, int w4)
 {
-    SetRpm[0] = -(onRollAxis + onPitchAxis - RotateSpeedGain * rotateYawAxis);
-    SetRpm[1] = -(onRollAxis - onPitchAxis + RotateSpeedGain * rotateYawAxis);
-    SetRpm[2] = -(onRollAxis - onPitchAxis - RotateSpeedGain * rotateYawAxis);
-    SetRpm[3] = (onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
+    WheelCounts[0] = w1;
+    WheelCounts[0] = w2;
+    WheelCounts[0] = w3;
+    WheelCounts[0] = w4;
 }
 
-
-void PidCalucate()
+void WheelPidCalucate()
 {
     for (int i = 0; i < 4; i++)
     {
@@ -109,7 +62,7 @@ void PidCalucate()
             WheelPid[i].ErrSum += WheelPid[i].Err;
         }
 
-        float output = MyPidParms.kp * WheelPid[i].Err + MyPidParms.kd * WheelPid[i].dErr + MyPidParms.ki * WheelPid[i].ErrSum;
+        float output = WheelPidParms.kp * WheelPid[i].Err + WheelPidParms.kd * WheelPid[i].dErr + WheelPidParms.ki * WheelPid[i].ErrSum;
         if (output > pidLimit)
         {
             output = pidLimit;
@@ -122,8 +75,20 @@ void PidCalucate()
     }
 }
 
-void MoveByAbs(int Forward, int Left)
+void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
 {
-    PidCalucate();
+    SetRpm[0] = -(onRollAxis + onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    SetRpm[1] = -(onRollAxis - onPitchAxis + RotateSpeedGain * rotateYawAxis);
+    SetRpm[2] = -(onRollAxis - onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    SetRpm[3] = (onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
+}
+
+void YawCalibration(float x, float y)
+{
+    
+}
+
+void MoveByAbs(float x, float y)
+{
     
 }
