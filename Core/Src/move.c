@@ -8,6 +8,7 @@ WheelPidVars WheelPid[4];
 YawPidVars YawPid[4];
 float SetRpm[4];
 int WheelCounts[4];
+float YawDifference;
 
 void InitPid()
 {
@@ -21,6 +22,9 @@ void InitPid()
         YawPid[i].Err = 0;
         YawPid[i].dErr = 0;
         YawPid[i].ErrSum = 0;
+        SetRpm[i] = 0;
+        WheelCounts[i] = 0;
+        YawDifference = 0;
     }
 }
 
