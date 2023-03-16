@@ -160,10 +160,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     //jy62_Init(&huart3); 
-    delay_ms(10); 
+    //delay_ms(10); 
     //Barrier_edc24 b=getOneBarrier(0); 
     //u2_printf("sb");
     //u2_printf("yaw:%6f    roll:%6f    pitch:%6f\r\n",jy62data.yaw,jy62data.roll,jy62data.pitch);
+    Barrier_edc24 pos=getOneBarrier(0);
+    u2_printf("%d",pos.pos_1.x);
+    delay_ms(1000);
     //float asdfg[3];
     //dijkstra();
     //QMC5883_GetData(asdfg);

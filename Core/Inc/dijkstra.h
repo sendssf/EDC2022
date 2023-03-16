@@ -21,6 +21,6 @@ typedef struct
 
 Position Vnode[MaxNum];
 double distance[MaxNum];
-bool visited[MaxNum];
+//bool visited[MaxNum];
 
 #endif

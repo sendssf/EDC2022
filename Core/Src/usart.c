@@ -27,7 +27,7 @@
 #include "jy62.h"
 #include "stdio.h"
 #include "move.h"
-#include "pid.h"
+//#include "pid.h"
 #include "zigbee_edc24.h"
 
 unsigned char Message[17];
@@ -325,27 +325,7 @@ void u3_printf(char* fmt, ...) { // usart.c末尾
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-    if (huart == &huart3) {
-        //JY_handler(rxData);
-    }
-    else if(huart==&huart2){
-      int16_t temp1,temp2,temp3;
-      sscanf(Message,"(%hd,%hd,%hd)",&temp1,&temp2,&temp3);
-      if(temp1==-999){
-        MypidParms.kp=temp3;
-      }
-      else if(temp1==-998){
-        MypidParms.kd=temp3;
-      }
-      else if(temp1==-997){
-        MypidParms.ki=temp3;
-      }
-      else{
-        MoveBasic((float)temp1,(float)temp2,(float)temp3);
-      }
-      //u2_printf("OK %d %d %d\r\n",temp1,temp2,temp3);
-      HAL_UART_Receive_IT(&huart2,Message,16);
-    }
+    
 }
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
