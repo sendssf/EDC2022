@@ -29,7 +29,6 @@
 /* USER CODE BEGIN Includes */
 #include "API.h"
 #include "system.h"
-#include "pid.h"
 #include "jy62.h"
 #include "move.h"
 #include "qmc5883.h"
@@ -55,11 +54,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern float Setrpm[4];
-extern pidParms MypidParms;
-extern pidVars wheelpid[4];
 uint8_t rxData[JY_BUF_SIZE << 1];                     // Rx buffer for JY62
-
+extern WheelPidVars WheelPid[4];
+extern PidParms WheelPidParms;
+extern PidParms YawPidParms;
 struct JY62_Mes JY62;
 struct JY62_Data jy62data;
 /* USER CODE END PV */
@@ -135,7 +133,13 @@ int main(void)
   delay_init();
   HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
   jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
-  rpmpid_Init();
+  InitPid();
+  WheelPidParms.kp = 1.2;
+  WheelPidParms.kd = 3.8;
+  WheelPidParms.ki = 1;
+  YawPidParms.kp = 1.2;
+  YawPidParms.kd = 3.8;
+  YawPidParms.ki = 1;
   HAL_UART_Receive_IT(&huart2,Message,16);
   SetBaud(115200);
   SetHorizontal();
@@ -160,7 +164,6 @@ int main(void)
     //Barrier_edc24 b=getOneBarrier(0); 
     //u2_printf("sb");
     //u2_printf("yaw:%6f    roll:%6f    pitch:%6f\r\n",jy62data.yaw,jy62data.roll,jy62data.pitch);
-    u2_printf("%d,%d,%d,%d,%d\r\n",100,-1*(int)wheelpid[0].rpm,-1*(int)wheelpid[1].rpm,-1*(int)wheelpid[2].rpm,(int)wheelpid[3].rpm);
     //float asdfg[3];
     //dijkstra();
     //QMC5883_GetData(asdfg);
@@ -213,66 +216,70 @@ float pwm_temp;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance == TIM6)
   {
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[0], __HAL_TIM_GET_COUNTER(&htim2), Setrpm[0]);
-    if (pwm_temp > 0)
+    SetWheelCount((__HAL_TIM_GET_COUNTER(&htim2)), (__HAL_TIM_GET_COUNTER(&htim4)), (__HAL_TIM_GET_COUNTER(&htim5)), (__HAL_TIM_GET_COUNTER(&htim8)));
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+    __HAL_TIM_SET_COUNTER(&htim4, 0);
+    __HAL_TIM_SET_COUNTER(&htim5, 0);
+    __HAL_TIM_SET_COUNTER(&htim8, 0);
+
+    WheelPidCalucate();
+
+    if (WheelPid[0].pwm >= 0)
     {
       PBout(15) = 1;
       PCout(14) = 0;
     }
-    else if (pwm_temp < 0)
+    else
     {
       PBout(15) = 0;
       PCout(14) = 1;
-      pwm_temp = -pwm_temp;
+      WheelPid[0].pwm = -WheelPid[0].pwm;
     }
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm_temp);
-    __HAL_TIM_SET_COUNTER(&htim2, 0);
-
-    //u2_printf("%f,%f\r\n",wheelpid[0].rpm,Setrpm[0]);
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[1], __HAL_TIM_GET_COUNTER(&htim4), Setrpm[1]);
-    if (pwm_temp > 0)
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, WheelPid[0].pwm);
+    if (WheelPid[1].pwm >= 0)
     {
       PBout(13) = 1;
       PBout(12) = 0;
     }
-    else if (pwm_temp < 0)
+    else
     {
       PBout(13) = 0;
       PBout(12) = 1;
-      pwm_temp = -pwm_temp;
+      WheelPid[1].pwm = -WheelPid[1].pwm;
     }
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, pwm_temp);
-    __HAL_TIM_SET_COUNTER(&htim4, 0);
-
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[2], __HAL_TIM_GET_COUNTER(&htim5), Setrpm[2]);
-    if (pwm_temp > 0)
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, WheelPid[1].pwm);
+    if (WheelPid[2].pwm >= 0)
     {
       PCout(0) = 1;
       PCout(1) = 0;
     }
-    else if (pwm_temp < 0)
+    else
     {
       PCout(0) = 0;
       PCout(1) = 1;
-      pwm_temp = -pwm_temp;
+      WheelPid[2].pwm = -WheelPid[2].pwm;
     }
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwm_temp);
-    __HAL_TIM_SET_COUNTER(&htim5, 0);
-
-    pwm_temp = Getrpmpid(&MypidParms, &wheelpid[3], __HAL_TIM_GET_COUNTER(&htim8), Setrpm[3]);
-    if (pwm_temp > 0)
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, WheelPid[2].pwm);
+    if (WheelPid[3].pwm >= 0)
     {
       PCout(2) = 1;
       PCout(3) = 0;
     }
-    else if (pwm_temp < 0)
+    else
     {
       PCout(2) = 0;
       PCout(3) = 1;
-      pwm_temp = -pwm_temp;
+      WheelPid[3].pwm = -WheelPid[3].pwm;
     }
-    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm_temp);
-    __HAL_TIM_SET_COUNTER(&htim8, 0);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, WheelPid[3].pwm);
+  }
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == SigIn_Pin)
+  {
+    PAout(5) = 1;
   }
 }
 
@@ -282,7 +289,7 @@ void JY_handler(uint8_t *rx) {
   Accdecode(rx);
 }
 
-void Accdecode(uint8_t *rx){   //加速度解码
+void Accdecode(uint8_t *rx){   //加�?�度解码
   static uint8_t sum = SUMACC, p = 0;
   uint8_t rxi;
   for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {
@@ -339,7 +346,7 @@ void Accdecode(uint8_t *rx){   //加速度解码
   }
 }
 
-void Velodecode(uint8_t *rx){    //角速度解码
+void Velodecode(uint8_t *rx){    //角�?�度解码
   static uint8_t sum = SUMVELO, p = 0;
   uint8_t rxi;
   for (uint8_t i = 0; i < JY_BUF_SIZE; ++i) {

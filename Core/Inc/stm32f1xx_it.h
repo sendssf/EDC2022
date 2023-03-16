@@ -58,6 +58,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void DMA1_Channel2_IRQHandler(void);
 void DMA1_Channel3_IRQHandler(void);
+void EXTI9_5_IRQHandler(void);
 void USART2_IRQHandler(void);
 void USART3_IRQHandler(void);
 void UART5_IRQHandler(void);

@@ -9,9 +9,9 @@
 #define CALIBTATE_DATA_NUM 10   //数据保留个数
 #define TIME_DELAY 0X02
 
-void QMC5883_WriteReg(uint8_t Val,uint8_t Reg);
-uint8_t QMC5883_ReadReg(uint8_t Reg);
-uint8_t QMC5883_InitConfig(void);
-void QMC5883_GetData(float *Magnet);
+void qmc5883_WriteReg(uint8_t Val,uint8_t Reg);
+uint8_t qmc5883_ReadReg(uint8_t Reg);
+uint8_t qmc5883_InitConfig(void);
+void qmc5883_GetData(float *Magnet);
 
 #endif

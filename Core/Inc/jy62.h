@@ -54,27 +54,27 @@ struct Temp
 
 /**************接口*************************/
 void jy62_Init(UART_HandleTypeDef* huart);    //初始化
-void jy62MessageRecord(void);              //实时记录信息，在每次接收完成后更新数据，重新开启中断
+void jy62_MessageRecord(void);              //实时记录信息，在每次接收完成后更新数据，重新开启中断
 
-void SetBaud(int Baud);     //设置波特率，可选择115200或9600
-void SetHorizontal(void);  //设置为水平放置模式
-void SetVertical(void);  //设置为垂直放置模式
-void InitAngle(void);    //初始化z轴角度为0
-void Calibrate(void);    //校准加速度计
-void SleepOrAwake(void);   //设置休眠/唤醒
+void jy62_SetBaud(int Baud);     //设置波特率，可选择115200或9600
+void jy62_SetHorizontal(void);  //设置为水平放置模式
+void jy62_SetVertical(void);  //设置为垂直放置模式
+void jy62_InitAngle(void);    //初始化z轴角度为0
+void jy62_Calibrate(void);    //校准加速度计
+void jy62_SleepOrAwake(void);   //设置休眠/唤醒
 
-float GetVeloX(void);       //获得角速度
-float GetVeloY(void);
-float GetVeloZ(void);
+float jy62_GetVeloX(void);       //获得角速度
+float jy62_GetVeloY(void);
+float jy62_GetVeloZ(void);
 
-float GetAccX(void);        //获得加速度
-float GetAccY(void);
-float GetAccZ(void);
+float jy62_GetAccX(void);        //获得加速度
+float jy62_GetAccY(void);
+float jy62_GetAccZ(void);
 
-float GetRoll(void);     //绕x轴旋转角度（横滚角）
-float GetPitch(void);    //绕y轴旋转角度（俯仰角）
-float GetYaw(void);     //绕z轴旋转角度（偏航角）
-float GetTemperature(void);
+float jy62_GetRoll(void);     //绕x轴旋转角度（横滚角）
+float jy62_GetPitch(void);    //绕y轴旋转角度（俯仰角）
+float jy62_GetYaw(void);     //绕z轴旋转角度（偏航角）
+float jy62_GetTemperature(void);
 
 /****************************************************/
 void Decode();
