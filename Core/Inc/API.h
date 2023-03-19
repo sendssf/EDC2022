@@ -64,7 +64,6 @@ extern Block block[20];
 extern uint8_t blocknum;
 extern uint8_t map[255][255]; 
 
-
 //函数功能：获得小车当前的前进方向
 //返回值：小车行进方向的绝对极坐标角度
 //返回值范围:0~359

@@ -3,6 +3,14 @@
 #define oo 100007
 
 Graph G;
+extern uint8_t map[255][255];
+uint8_t shortest_path[MaxNum];
+Position Vnode[MaxNum];
+double distance[MaxNum];
+uint8_t Visited[MaxNum];
+uint8_t path[MaxNum];
+uint8_t steps;
+uint8_t angles[MaxNum];
 
 uint8_t shortest_path[MaxNum];
 Position Vnode[MaxNum];
