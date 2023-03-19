@@ -4,10 +4,13 @@
 
 Graph G;
 
+uint8_t shortest_path[MaxNum];
 Position Vnode[MaxNum];
 double distance[MaxNum];
 uint8_t Visited[MaxNum];
 uint8_t path[MaxNum];
+uint8_t steps;
+uint8_t angles[MaxNum];
 
 int two2one(int x, int y) { // 将二维坐标转换成一维
     return x * 255 + y;
@@ -164,11 +167,24 @@ void shortest_path1()
         temp = path[temp];
     } while (temp != 1);
     shortest_path[count] = 1;
+    steps = count+1;
     for(uint8_t i = 0; i < (count+1)/2; i++)
     {
         t = shortest_path[i];
         shortest_path[i] = shortest_path[count-i];
         shortest_path[count-i] = t;
+    }
+}
+
+void GetAngle()
+{
+    for(int i = 0;i<MaxNum;i++)
+    {
+        angles[i] = 0;
+    }
+    for(int i = 0;i<steps-1;i++)
+    {
+        angles[i] = atan2((Vnode[path[i+1]].x-Vnode[path[i]].x),(Vnode[path[i+1]].y-Vnode[path[i]].y));
     }
 }
 

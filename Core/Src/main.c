@@ -165,6 +165,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    InitNode();
+    BuildGraph();
+    Dijkstra();
+    shortest_path1();
+    MoveByAbs(50,angles[0]);
     //jy62_Init(&huart3); 
     //delay_ms(10); 
     //Barrier_edc24 b=getOneBarrier(0); 
