@@ -3,8 +3,6 @@
 
 #include "stdint.h"
 #include "math.h"
-#include "jy62.h"
-#include "qmc5883.h"
 
 //每转一圈编码盘计数
 #define CountPerRound 13
@@ -17,7 +15,7 @@
 //控制pwm输出的平滑程度，范围0~1，等于1时计算pwm只考虑当次的pid输出，否则考虑与上一次的pwm加权平均后再输出，一般取值0.6~1
 #define pwmLastRatio 0.9
 //限制积分变量的绝对值
-#define IntegralLimit 600
+#define IntegralLimit 800
 //最大转速绝对值
 #define Maxrpm 2000
 //转向速度增益
@@ -64,11 +62,8 @@ typedef struct
 //初始化
 void InitPid();
 
-//输入轮子的编码器数值
-void SetWheelCount(int w1, int w2, int w3, int w4);
-
 //计算得出轮子的pwm值
-void WheelPidCalucate();
+void WheelPidCalculate();
 
 //基本移动函数，分别控制前后、左右、旋转分量来控制移动
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis);
@@ -77,7 +72,7 @@ void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis);
 void YawCalibration(float x, float y);
 
 //计算得出轮子的pwm值
-void YawPidCalucate();
+void YawPidCalculate();
 
 //移动函数，输入速度以及角度（与Y轴正方向所成夹角）
 void MoveByAbs(float v, float degree);
