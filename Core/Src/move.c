@@ -23,6 +23,9 @@ void InitPid()
         SetRpm[i] = 0;
         WheelCounts[i] = 0;
     }
+    YawPid.currentyaw = 0;
+    YawPid.goalyaw = 0;
+    YawPid.goalv = 0;
     YawPid.Err = 0;
     YawPid.dErr = 0;
     YawPid.ErrSum = 0;
@@ -88,16 +91,41 @@ void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
     SetRpm[3] = (onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
 }
 
-void YawCalibration(float x, float y)
+void YawCalibration(float vx, float vy)
 {
-    
+    YawDifference = atan2f(vx, vy) - AxisData.yaw;
 }
 
-void MoveByAbs(float x, float y)
+void YawPidCalucate()
 {
-    float ReYaw = AxisData.yaw + YawDifference;
-    double ReVGoal = sqrt(pow(x, 2) + pow(y, 2));
-    double ReVCurrent = sqrt(pow(AxisData.velox, 2) + pow(AxisData.veloy, 2));
+    YawPid.currentyaw = AxisData.yaw + YawDifference;
+
+    YawPid.Err = YawPid.goalyaw - YawPid.currentyaw;
+    YawPid.dErr = AxisData.accz;
+    if (YawPid.ErrSum > IntegralLimit)
+        {
+            if (YawPid.Err < 0)
+            {
+                YawPid.ErrSum += YawPid.Err;
+            }
+        }
+        else if (YawPid.ErrSum < -IntegralLimit)
+        {
+            if (YawPid.Err > 0)
+            {
+                YawPid.ErrSum += YawPid.Err;
+            }
+        }
+        else{
+            YawPid.ErrSum += YawPid.Err;
+        }
+    YawPid.dYawOutput = YawPidParms.kp * YawPid.Err + YawPidParms.kd * YawPid.dErr + YawPidParms.ki * YawPid.ErrSum;
     //当pid输出值为正时，目标方向将顺时针偏转
-    MoveBasic(x + y * YawPid.dYawOutput / ReVGoal, y - x * YawPid.dYawOutput / ReVGoal, 0);
+    MoveBasic(YawPid.goalv * sin(YawPid.goalyaw + YawPid.dYawOutput), YawPid.goalv * cos(YawPid.goalyaw + YawPid.dYawOutput), 0);
+}
+
+void MoveByAbs(float v, float degree)
+{
+    YawPid.goalv = v;
+    YawPid.goalyaw = degree;
 }

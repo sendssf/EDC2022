@@ -44,8 +44,9 @@ typedef struct
 //此结构体存储小车方向pid变量
 typedef struct 
 {
-    float currentx;
-    float currenty;
+    float currentyaw;
+    float goalyaw;
+    float goalv;
     float dYawOutput;
     float Err;
     float dErr;
@@ -75,7 +76,10 @@ void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis);
 //输入当前速度在X, Y上的分量来校准方位角，使得当小车朝向Y正方向移动时方位角为0，当小车朝向X正方向移动时方位角为90
 void YawCalibration(float x, float y);
 
-//移动函数，输入速度在X, Y方向上的分量
-void MoveByAbs(float x, float y);
+//计算得出轮子的pwm值
+void YawPidCalucate();
+
+//移动函数，输入速度以及角度（与Y轴正方向所成夹角）
+void MoveByAbs(float v, float degree);
 
 #endif
