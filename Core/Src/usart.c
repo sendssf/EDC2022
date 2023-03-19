@@ -329,9 +329,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 }
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart == &huart3) {
+  if (huart == &huart3) 
+  {
     JY_handler(rxData);
-
   }
 }
 /* USER CODE END 1 */

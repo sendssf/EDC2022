@@ -62,6 +62,7 @@ extern Trace trace;
 extern Node* foodlist;
 extern Block block[20];
 extern uint8_t blocknum;
+extern uint8_t map[255][255]; 
 
 
 //函数功能：获得小车当前的前进方向

@@ -1,7 +1,4 @@
 #include "move.h"
-#include "API.h"
-#include "system.h"
-//#include "main.h"
 
 PidParms WheelPidParms, YawPidParms;
 WheelPidVars WheelPid[4];
@@ -32,15 +29,7 @@ void InitPid()
     YawDifference = 0;
 }
 
-void SetWheelCount(int w1, int w2, int w3, int w4)
-{
-    WheelCounts[0] = w1;
-    WheelCounts[0] = w2;
-    WheelCounts[0] = w3;
-    WheelCounts[0] = w4;
-}
-
-void WheelPidCalucate()
+void WheelPidCalculate()
 {
     for (int i = 0; i < 4; i++)
     {
@@ -85,10 +74,10 @@ void WheelPidCalucate()
 
 void MoveBasic(float onPitchAxis, float onRollAxis, float rotateYawAxis)
 {
-    SetRpm[0] = -(onRollAxis + onPitchAxis - RotateSpeedGain * rotateYawAxis);
-    SetRpm[1] = -(onRollAxis - onPitchAxis + RotateSpeedGain * rotateYawAxis);
-    SetRpm[2] = -(onRollAxis - onPitchAxis - RotateSpeedGain * rotateYawAxis);
-    SetRpm[3] = (onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
+    SetRpm[0] = (onRollAxis + onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    SetRpm[1] = (onRollAxis - onPitchAxis + RotateSpeedGain * rotateYawAxis);
+    SetRpm[2] = (onRollAxis - onPitchAxis - RotateSpeedGain * rotateYawAxis);
+    SetRpm[3] = -(onRollAxis + onPitchAxis + RotateSpeedGain * rotateYawAxis);
 }
 
 void YawCalibration(float vx, float vy)
@@ -96,10 +85,9 @@ void YawCalibration(float vx, float vy)
     YawDifference = atan2f(vx, vy) - AxisData.yaw;
 }
 
-void YawPidCalucate()
+void YawPidCalculate()
 {
     YawPid.currentyaw = AxisData.yaw + YawDifference;
-
     YawPid.Err = YawPid.goalyaw - YawPid.currentyaw;
     YawPid.dErr = AxisData.accz;
     if (YawPid.ErrSum > IntegralLimit)

@@ -55,9 +55,11 @@
 
 /* USER CODE BEGIN PV */
 uint8_t rxData[JY_BUF_SIZE << 1];                     // Rx buffer for JY62
+extern int WheelCounts[4];
 extern WheelPidVars WheelPid[4];
 extern PidParms WheelPidParms;
 extern PidParms YawPidParms;
+extern StateInfo AxisData;
 struct JY62_Mes JY62;
 struct JY62_Data jy62data;
 /* USER CODE END PV */
@@ -132,6 +134,9 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
   HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
+
+  delay_ms(2000);
+
   jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
   InitPid();
   WheelPidParms.kp = 1.2;
@@ -154,23 +159,29 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   delay_ms(2000);
+  //MoveByAbs(50, 90);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    InitNode();
+    BuildGraph();
+    Dijkstra();
+    shortest_path1();
+    MoveByAbs(50,angles[0]);
     //jy62_Init(&huart3); 
     //delay_ms(10); 
     //Barrier_edc24 b=getOneBarrier(0); 
     //u2_printf("sb");
     //u2_printf("yaw:%6f    roll:%6f    pitch:%6f\r\n",jy62data.yaw,jy62data.roll,jy62data.pitch);
-    Barrier_edc24 pos=getOneBarrier(0);
-    u2_printf("%d",pos.pos_1.x);
+    //Barrier_edc24 pos=getOneBarrier(0);
+    //u2_printf("%d",pos.pos_1.x);
     delay_ms(1000);
     //float asdfg[3];
     //dijkstra();
     //QMC5883_GetData(asdfg);
-    //u2_printf("%fzc%fzc%f\r\n", asdfg[0], asdfg[1], asdfg[2]);
+    u2_printf("%f %f %f %f\r\n", JY62.angleyaw, JY62.velox, JY62.veloy, JY62.accz);
     //QMC5883_InitConfig();
   }
   /* USER CODE END 3 */
@@ -215,17 +226,21 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-float pwm_temp;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   if(htim->Instance == TIM6)
   {
-    SetWheelCount((__HAL_TIM_GET_COUNTER(&htim2)), (__HAL_TIM_GET_COUNTER(&htim4)), (__HAL_TIM_GET_COUNTER(&htim5)), (__HAL_TIM_GET_COUNTER(&htim8)));
+    
+    WheelCounts[0] = __HAL_TIM_GET_COUNTER(&htim2);
+    WheelCounts[1] = __HAL_TIM_GET_COUNTER(&htim4);
+    WheelCounts[2] = __HAL_TIM_GET_COUNTER(&htim5);
+    WheelCounts[3] = __HAL_TIM_GET_COUNTER(&htim8);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
     __HAL_TIM_SET_COUNTER(&htim4, 0);
     __HAL_TIM_SET_COUNTER(&htim5, 0);
     __HAL_TIM_SET_COUNTER(&htim8, 0);
 
-    WheelPidCalucate();
+    YawPidCalculate();
+    WheelPidCalculate();
 
     if (WheelPid[0].pwm >= 0)
     {
