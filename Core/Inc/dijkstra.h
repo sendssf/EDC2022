@@ -4,7 +4,7 @@
 #include "API.h"
 #include "main.h"
 
-#define MaxNum 167
+#define MaxNum 200
 
 typedef struct
 {
@@ -19,8 +19,5 @@ typedef struct
 	VertexType vex[MaxNum];//存放结点信息
 }Graph;
 
-Position Vnode[MaxNum];
-double distance[MaxNum];
-bool visited[MaxNum];
-
+extern uint8_t shortest_path[MaxNum];
 #endif
