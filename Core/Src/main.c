@@ -55,6 +55,7 @@
 
 /* USER CODE BEGIN PV */
 uint8_t rxData[JY_BUF_SIZE << 1];                     // Rx buffer for JY62
+uint8_t zigbeetest[20];
 extern int WheelCounts[4];
 extern WheelPidVars WheelPid[4];
 extern PidParms WheelPidParms;
@@ -134,7 +135,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   delay_init();
   HAL_UART_Receive_DMA(&huart3, rxData, JY_BUF_SIZE << 1);
-
+  HAL_UART_Receive_IT(&huart5,zigbeetest,20);
   delay_ms(2000);
 
   jy62_Init(&huart3);     //uart3作为和加速度计�?�信的串�???????????
@@ -142,9 +143,9 @@ int main(void)
   WheelPidParms.kp = 1.2;
   WheelPidParms.kd = 3.8;
   WheelPidParms.ki = 1;
-  YawPidParms.kp = 1.2;
-  YawPidParms.kd = 3.8;
-  YawPidParms.ki = 1;
+  YawPidParms.kp = -0.5;
+  YawPidParms.kd = 0;
+  YawPidParms.ki = 0;
   HAL_UART_Receive_IT(&huart2,Message,16);
   SetBaud(115200);
   SetHorizontal();
@@ -152,19 +153,24 @@ int main(void)
   Calibrate();
   //SleepOrAwake();
   QMC5883_InitConfig();
-  //zigbee_Init(&huart3);
+  zigbee_Init(&huart3);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   delay_ms(2000);
-  //MoveByAbs(50, 90);
+  MoveByAbs(50, 90);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    reqGameInfo();
+    delay_ms(2000);
+    Order_edc24 food=getLatestPendingOrder();
+    Position_edc24 pos=getVehiclePos();
+    
     //jy62_Init(&huart3); 
     //delay_ms(10); 
     //Barrier_edc24 b=getOneBarrier(0); 
@@ -176,7 +182,7 @@ int main(void)
     //float asdfg[3];
     //dijkstra();
     //QMC5883_GetData(asdfg);
-    u2_printf("%f %f %f %f\r\n", JY62.angleyaw, JY62.velox, JY62.veloy, JY62.accz);
+    u2_printf("%s\r\n",zigbeetest);
     //QMC5883_InitConfig();
   }
   /* USER CODE END 3 */

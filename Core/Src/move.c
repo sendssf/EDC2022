@@ -95,7 +95,7 @@ void SetStateInfo(float accx, float accy, float accz, float velox, float veloy, 
 
 void YawCalibration(float vx, float vy)
 {
-    YawDifference = atan2f(vx, vy) - AxisData.yaw;
+    YawDifference = atan2f(vx, vy) * 180 / 3.1415926 - AxisData.yaw;
 }
 
 void YawPidCalculate()
@@ -121,8 +121,16 @@ void YawPidCalculate()
             YawPid.ErrSum += YawPid.Err;
         }
     YawPid.dYawOutput = YawPidParms.kp * YawPid.Err + YawPidParms.kd * YawPid.dErr + YawPidParms.ki * YawPid.ErrSum;
+    if (YawPid.dYawOutput > 40)
+    {
+        YawPid.dYawOutput = 40;
+    }
+    else if (YawPid.dYawOutput < -40)
+    {
+        YawPid.dYawOutput = -40;
+    }
     //当pid输出值为正时，目标方向将顺时针偏转
-    MoveBasic(YawPid.goalv * sin(YawPid.goalyaw + YawPid.dYawOutput), YawPid.goalv * cos(YawPid.goalyaw + YawPid.dYawOutput), 0);
+    MoveBasic(YawPid.goalv * sin(YawPid.goalyaw), YawPid.goalv * cos(YawPid.goalyaw), YawPid.dYawOutput);
 }
 
 void MoveByAbs(float v, float degree)
