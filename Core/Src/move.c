@@ -5,9 +5,11 @@
 
 PidParms WheelPidParms, YawPidParms;
 WheelPidVars WheelPid[4];
-YawPidVars YawPid[4];
+YawPidVars YawPid;
 float SetRpm[4];
 int WheelCounts[4];
+StateInfo AxisData;
+float YawDifference;
 
 void InitPid()
 {
@@ -18,10 +20,13 @@ void InitPid()
         WheelPid[i].Err = 0;
         WheelPid[i].dErr = 0;
         WheelPid[i].ErrSum = 0;
-        YawPid[i].Err = 0;
-        YawPid[i].dErr = 0;
-        YawPid[i].ErrSum = 0;
+        SetRpm[i] = 0;
+        WheelCounts[i] = 0;
     }
+    YawPid.Err = 0;
+    YawPid.dErr = 0;
+    YawPid.ErrSum = 0;
+    YawDifference = 0;
 }
 
 void SetWheelCount(int w1, int w2, int w3, int w4)
@@ -90,5 +95,9 @@ void YawCalibration(float x, float y)
 
 void MoveByAbs(float x, float y)
 {
-    
+    float ReYaw = AxisData.yaw + YawDifference;
+    double ReVGoal = sqrt(pow(x, 2) + pow(y, 2));
+    double ReVCurrent = sqrt(pow(AxisData.velox, 2) + pow(AxisData.veloy, 2));
+    //当pid输出值为正时，目标方向将顺时针偏转
+    MoveBasic(x + y * YawPid.dYawOutput / ReVGoal, y - x * YawPid.dYawOutput / ReVGoal, 0);
 }
