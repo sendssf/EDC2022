@@ -12,6 +12,14 @@ uint8_t path[MaxNum];
 uint8_t steps;
 uint8_t angles[MaxNum];
 
+uint8_t shortest_path[MaxNum];
+Position Vnode[MaxNum];
+double distance[MaxNum];
+uint8_t Visited[MaxNum];
+uint8_t path[MaxNum];
+uint8_t steps;
+uint8_t angles[MaxNum];
+
 int two2one(int x, int y) { // 将二维坐标转换成一维
     return x * 255 + y;
 }

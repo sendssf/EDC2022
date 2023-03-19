@@ -170,7 +170,6 @@ int main(void)
     delay_ms(2000);
     Order_edc24 food=getLatestPendingOrder();
     Position_edc24 pos=getVehiclePos();
-    
     //jy62_Init(&huart3); 
     //delay_ms(10); 
     //Barrier_edc24 b=getOneBarrier(0); 
